@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <ctype.h>
+
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
 
 #define BOARD_SIZE 9
 #define MAX_ROWS 100
@@ -249,8 +256,189 @@ void freeTilesMemory(){
     free(h_amt);
 }
 
+char** character = NULL;
+char** name = NULL;
+char** sp_ability = NULL;
+char** backstory = NULL;
+char** personality = NULL;
+char** nick_name = NULL;
+char* selected_player;
+char* selected_personality;
+char* selected_speciality;
+double money = 10000.00;
+
+int char_row = 0;
+int char_trav = 0;
+
+void get_Character_Details() {
+    FILE* fp = fopen("characters.csv", "r");
+
+    if (!fp) {
+        printf("Can't open file\n");
+        return;
+    } else {
+        // Allocate memory for each array to store column values for 100 rows
+        character = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+        name = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+        sp_ability = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+        backstory = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+        personality = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+        nick_name = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+
+        char buffer[1024]; // buffer to store each line of the CSV
+        while (fgets(buffer, sizeof(buffer), fp)) {
+            char_row++;
+            if (char_row == 1) {
+                continue; // Skip the header row
+            }
+
+            // Tokenize each row
+            char* value = strtok(buffer, ",");
+            int column = 0;
+
+            // Parse the columns and store values into appropriate arrays
+            while (value) {
+                // Trim whitespace if necessary
+                value = value + strspn(value, " \t");
+                for (int i = strlen(value) - 1; i >= 0; i--) {
+                    if (value[i] == ' ' || value[i] == '\t') {
+                        value[i] = '\0';  // Remove trailing spaces
+                    } else {
+                        break;
+                    }
+                }
+
+                if (column == 0) {
+                    character[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    if (character[char_trav] == NULL) {
+                        printf("Memory allocation failed\n");
+                        return;
+                    }
+                    strcpy(character[char_trav], value);
+                } else if (column == 1) {
+                    char name1[250], name2[250], full_name[500];
+                    name[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    nick_name[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    if (name[char_trav] == NULL) {
+                        printf("Memory allocation failed\n");
+                        return;
+                    }
+                    sscanf(value, "%s %*s %s", name1, name2);
+                    snprintf(full_name, sizeof(full_name), "%s %s", name1, name2);
+                    strcpy(name[char_trav], full_name);
+                    sscanf(value,  "%*s \"%[^\"]\"", nick_name[char_trav]); ///extracting nick name
+                } else if (column == 2) {
+                    sp_ability[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    if (sp_ability[char_trav] == NULL) {
+                        printf("Memory allocation failed\n");
+                        return;
+                    }
+                    strcpy(sp_ability[char_trav], value);
+                } else if (column == 3) {
+                    backstory[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    if (backstory[char_trav] == NULL) {
+                        printf("Memory allocation failed\n");
+                        return;
+                    }
+                    strcpy(backstory[char_trav], value);
+                } else if (column == 4) {
+                    personality[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    if (personality[char_trav] == NULL) {
+                        printf("Memory allocation failed\n");
+                        return;
+                    }
+                    strcpy(personality[char_trav], value);
+                }
+                // Move to the next token
+                value = strtok(NULL, ",");
+                column++;
+            }
+            char_trav++;   //next row
+        }
+        fclose(fp);
+    }
+}
+
+void display_Character_Details() {
+    printf("[[[[[[[[[[[[[[[[[[[[[[[[[  CHARACTER LOBBY  ]]]]]]]]]]]]]]]]]]]]]]]]]]]\n");
+    for (int i = 0; i < char_trav; i++) {
+        char ch;
+        printf(YELLOW "+----------------------------------------------------+\n");
+        printf("| %-2d |CHARACTER: %-35s |\n" RESET, i+1, character[i]); 
+        printf("+----------------------------------------------------+\n" RESET);
+        printf("|NAME: %-18s [][][][] SHORT NAME: %-13s \n", name[i], nick_name[i]); 
+        printf("+----------------------------------------------------+\n");
+        printf("|PERSONA: %s \n", personality[i]);  
+        printf("+----------------------------------------------------+\n");
+        printf(GREEN "|SPECIAL ABILITY: %-60s \n" RESET, sp_ability[i]);  
+        printf("+----------------------------------------------------+\n");
+        printf("|BACKSTORY: %s \n", backstory[i]);  
+        printf("+----------------------------------------------------+\n" );
+        // printf("| %-26s |\n", sp_ability[i]);  // Description
+        // printf("+----------------------------+\n");
+        printf("\n");
+        printf("PRESS ENTER TO VIEW OTHER CHARACTER \n");
+        ch = getchar();
+        if (ch == '\n') {
+            printf("[][] Loading character details [][] \n");
+            sleep(2);
+            system("clear");
+        } else {
+            printf("You didn't press Enter!\n");
+            sleep(10);
+        }
+    }
+}
+
+void Confirmed_character(char* nickname,char* personality,char* speciality){
+    system("clear");
+    printf(YELLOW "[_] Hey %s, Welcome to Switzerland! \n\n[_] I'm Mia, I will be assisting towards your journey in Switzerland \n\n[_] You have Rs %.2f with you in cash\n\n[_] Surviving and living your life the fullest is your goal\n\n[_] Each decision you make will either make you a millionare or bankrupt\n\n" RESET, nickname, money);
+    selected_player = nickname;
+    selected_personality = personality;
+    selected_speciality = speciality;
+}
+
 void player_setup(int choice){
     printf("You have selected Character: %d \n", choice);
+    printf(YELLOW "+----------------------------------------------------+\n");
+    printf("| %-2d |CHARACTER: %-35s |\n" RESET, choice, character[choice-1]); 
+    printf("+----------------------------------------------------+\n" RESET);
+    printf("|NAME: %-18s [][][][] SHORT NAME: %-13s \n", name[choice-1], nick_name[choice-1]); 
+    printf("+----------------------------------------------------+\n");
+    printf("|PERSONA: %s \n", personality[choice-1]);  
+    printf("+----------------------------------------------------+\n");
+    printf(GREEN "|SPECIAL ABILITY: %-60s \n" RESET, sp_ability[choice-1]);  
+    printf("+----------------------------------------------------+\n");
+    printf("|BACKSTORY: %s \n", backstory[choice-1]);  
+    printf("+----------------------------------------------------+\n" );
+    printf("\n\n");
+    char ch_i;
+    printf("MOVE FORWARD WITH CURRENT SELECTION [Enter Y or N]? \n");
+    while (1) {
+        ch_i = getchar(); 
+        if (ch_i == '\n') {
+            //printf("You pressed Enter without Y or N. Please provide a valid answer.\n");
+            continue;
+        }
+        if (tolower(ch_i) == 'y') {
+            printf("MOVING FORWARD WITH THE SELECTION\n");
+            sleep(3);
+            Confirmed_character(nick_name[choice-1], personality[choice-1],sp_ability[choice-1]);
+            break;
+        } else if (tolower(ch_i) == 'n') {
+            printf("[][] Loading character details [][] \n");
+            sleep(1);
+            system("clear");
+            display_Character_Details();
+            printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
+            //printf(RED "Error: Operation Failed\n" RESET);
+            scanf("%d", &choice);
+            player_setup(choice);
+            break;
+        } else {
+            printf("Invalid input! Please enter 'Y' or 'N'.\n");
+        }
+    }
 }
 
 int main() {
@@ -269,7 +457,11 @@ int main() {
     }
 
     //function to have the player details
-    printf("Select your Character \n");
+    get_Character_Details();
+    display_Character_Details();
+    //exit(0);
+    printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
+    //printf(RED "Error: Operation Failed\n" RESET);
     scanf("%d", &choice);
     player_setup(choice);
 
