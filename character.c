@@ -246,33 +246,79 @@ void free_Character_Details() {
     nick_name = NULL;
 }
 
-void design(){
-    printf(" /`\\ \n");
-    printf("_|_|_\n");
-    printf("\n");
-    printf(" /====\\ \n");
-    printf("| -  - |\n");
-    printf("| -  - |\n");
-    printf("|______|\n");
-    printf("\n");
+char** design() {
+    // Dynamically allocate memory for the array of char pointers
+    char **designs = (char**) malloc(9 * sizeof(char*));
+    if (!designs) {
+        printf("Memory allocation failed for designs array!\n");
+        return NULL;
+    }
 
-    char jeep[100];
-    char person[100];
-    char airport[100];
-    snprintf(jeep, sizeof(jeep),
-             " ___\n"
-             "/   | \n"
-             "o``o`\n");
-    snprintf(person, sizeof(person),
-            "  o   \n"
-            " /Q\\  \n"
-            " / \\  \n");
-    snprintf(airport, sizeof(airport),
-            "  _____/\\\n"
-            "/[]`````|\n"
-            "````\\_\\``\n");
-    
-    printf("%s", jeep);
-    printf("%s", person);
-    printf("%s", airport);
+    // Dynamically allocate memory for each design string and format the strings
+    designs[0] = (char*) malloc(50 * sizeof(char));
+    snprintf(designs[0], 50, " /```````\\ \n"
+                            "`|``|`|``|`\n" 
+                            " ^^HOUSE^^ \n");
+
+    designs[1] = (char*) malloc(50 * sizeof(char));
+    snprintf(designs[1], 50, " ___\n"
+                            "/   | \n"
+                            "o``o`\n");
+
+    designs[2] = (char*) malloc(20 * sizeof(char));
+    snprintf(designs[2], 20, "  o   \n"
+                            " /Q\\  \n"
+                            " / \\\n");
+
+    designs[3] = (char*) malloc(100 * sizeof(char));
+    snprintf(designs[3], 100, "  _____/\\\n"
+                             "/[]`````|\n"
+                             "````\\_\\``\n");
+
+    designs[4] = (char*) malloc(100 * sizeof(char));
+    snprintf(designs[4], 100, " /====\\ \n"
+                             "| HOTEL|\n"
+                             "| -  - |\n"
+                             "| -  - |\n"
+                             "|_|^^|_|\n");
+
+    designs[5] = (char*) malloc(100 * sizeof(char));
+    snprintf(designs[5], 100, "       \n"
+                             "    ii_____n_ \n"
+                             "   _|        |_\n"
+                             "  /___CRUISE___\\\n"
+                             "~~~~~~~~~~~~~~~~~~\n");
+
+    designs[6] = (char*) malloc(100 * sizeof(char));
+    snprintf(designs[6], 100, " /````\\ \n"
+                             "|OFFICE|\n"
+                             "| -  - |````|\n"
+                             "| -  - | -- |\n"
+                             "|_|^^|_|_[]_|\n");
+
+    designs[7] = (char*) malloc(40 * sizeof(char));
+    snprintf(designs[7], 40, "  \\ o /\n"
+                             "    Q  \n"
+                             "   / \\ \n"
+                             "LUCKY DAY\n");
+
+    designs[8] = (char*) malloc(100 * sizeof(char));
+    snprintf(designs[8], 100, "|---PRISON---|| \n"
+                             "| | | | | | | | \n"
+                             "| | | | | | | | \n"
+                             "| | | | | | | | \n"
+                             "``````````````` \n");
+    designs[9] = (char*) malloc(100 * sizeof(char));
+    snprintf(designs[8], 100, " ____n____\n"
+                              "|         | \n"
+                              "|__START__|\n");
+
+    return designs;
+}
+
+void free_design(char** designs){
+    for (int i = 0; i < 10; i++) {
+        free(designs[i]);  // Free each string
+    }
+    free(designs); 
 }

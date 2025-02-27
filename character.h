@@ -4,4 +4,5 @@ void display_Character_Details();
 void Confirmed_character();
 void player_setup(int choice);
 void free_Character_Details();
-void design();
+char** design();
+void free_design(char** designs);

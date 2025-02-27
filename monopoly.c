@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include "character.h"
+#include "board_layout.h"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -271,8 +272,7 @@ int main() {
     if (ht == NULL) {
         return 1;  
     }
-
-    design();
+    board_layout();
     exit(0);
     //function to have the player details
     get_Character_Details();
@@ -282,12 +282,10 @@ int main() {
     player_setup(choice);
 
     free_Character_Details();
-
-
     exit(0);
     getTilesAttr();
     displayTiles();
     freeTilesMemory();
 }
 
-//cmd to execute script: gcc monopoly.c -o monopoly && ./monopoly
+//cmd to execute script: gcc monopoly.c character.c -o monopoly && ./monopoly
