@@ -248,12 +248,12 @@ void free_Character_Details() {
 
 char** design() {
     // Dynamically allocate memory for the array of char pointers
-    char **designs = (char**) malloc(9 * sizeof(char*));
+    char **designs = (char**) malloc(9 * sizeof(char*)); //hardcode 9 element
     if (!designs) {
         printf("Memory allocation failed for designs array!\n");
         return NULL;
     }
-
+    //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start
     // Dynamically allocate memory for each design string and format the strings
     designs[0] = (char*) malloc(50 * sizeof(char));
     snprintf(designs[0], 50, " /```````\\ \n"
@@ -309,7 +309,7 @@ char** design() {
                              "| | | | | | | | \n"
                              "``````````````` \n");
     designs[9] = (char*) malloc(100 * sizeof(char));
-    snprintf(designs[8], 100, " ____n____\n"
+    snprintf(designs[9], 100, " ____n____\n"
                               "|         | \n"
                               "|__START__|\n");
 

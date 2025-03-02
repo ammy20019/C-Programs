@@ -1,5 +1,5 @@
-Treasure,Place,House,Income Tax,Airport,T_amt,P_amt,H_amt,A_amt
-It's your birthday collect Rs 1200.00 from bank,Zürich,1BHK Apartment in Zurich,10,Zurich Airport (Flughafen Zürich),1200,1450,2450,3300
-Your Sibling sent you Rs 2000.00,Geneva,Hotel Parkhotel Beatenberg,0,Geneva International Airport,2000,1800,3000,4000
-You won a lottery of Rs 1500.00,Basel,Hotel The Dolder Grand,25,Basel-Mulhouse Airport,1500,1650,2150,2750
-Your life insurance policy has matured and you have received Rs 3000,Lausanne,Gallen Convention Hall,30,St. Gallen Airport,3000,1300,3500,3200
+Treasure,Place,House,Income Tax,Airport,Company,T_amt,P_amt,H_amt,A_amt,C_amt
+It's your birthday collect Rs 1200.00 from bank,Zürich,1BHK Apartment in Zurich,10,Zurich Airport (Flughafen Zürich),ABB,1200,1450,2450,3300,1900
+Your Sibling sent you Rs 2000.00,Geneva,Hotel Parkhotel Beatenberg,0,Geneva International Airport,Nestle,2000,1800,3000,4000,4500
+You won a lottery of Rs 1500.00,Basel,Hotel The Dolder Grand,25,Basel-Mulhouse Airport,Novartis,1500,1650,2150,2750,3000
+Your life insurance policy has matured and you have received Rs 3000,Lausanne,Gallen Convention Hall,30,St. Gallen Airport,Credit Suisse,3000,1300,3500,3200,2800
