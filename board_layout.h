@@ -3,4 +3,8 @@ void getTilesAttr();
 void displayTiles();
 void freeTilesMemory();
 void getBoardAttr();
+void attrOffice(int i,int randomIndex);
+void attrAirport(int i,int randomIndex);
+void attrLuck(int i,int randomIndex);
+void attrProperty(int i,int randomIndex);
 void displayBoard();

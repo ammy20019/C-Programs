@@ -1,7 +1,8 @@
 Tile_Type,Attributes
 Start,You landed on START received Rs 5000.00
-Property,You are at
-Airport,You are at
-Good Luck, Today is your lucky day
-Prison, You have been sent to Prison
-Office, You are at
+Property,You are at,
+Airport,You are at,
+Good Luck, Today is your lucky day,
+Prison, You have been sent to Prison,
+Office, You are at,
+Property, You are at,

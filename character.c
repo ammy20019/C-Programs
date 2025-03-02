@@ -258,60 +258,60 @@ char** design() {
     designs[0] = (char*) malloc(50 * sizeof(char));
     snprintf(designs[0], 50, " /```````\\ \n"
                             "`|``|`|``|`\n" 
-                            " ^^HOUSE^^ \n");
+                            " ^^HOUSE^^  ");
 
     designs[1] = (char*) malloc(50 * sizeof(char));
     snprintf(designs[1], 50, " ___\n"
                             "/   | \n"
-                            "o``o`\n");
+                            "o``o`  ");
 
     designs[2] = (char*) malloc(20 * sizeof(char));
     snprintf(designs[2], 20, "  o   \n"
                             " /Q\\  \n"
-                            " / \\\n");
+                            " / \\  ");
 
     designs[3] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[3], 100, "  _____/\\\n"
                              "/[]`````|\n"
-                             "````\\_\\``\n");
+                             "````\\_\\``  ");
 
     designs[4] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[4], 100, " /====\\ \n"
                              "| HOTEL|\n"
                              "| -  - |\n"
                              "| -  - |\n"
-                             "|_|^^|_|\n");
+                             "|_|^^|_|  ");
 
     designs[5] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[5], 100, "       \n"
                              "    ii_____n_ \n"
                              "   _|        |_\n"
                              "  /___CRUISE___\\\n"
-                             "~~~~~~~~~~~~~~~~~~\n");
+                             "~~~~~~~~~~~~~~~~~~  ");
 
     designs[6] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[6], 100, " /````\\ \n"
                              "|OFFICE|\n"
                              "| -  - |````|\n"
                              "| -  - | -- |\n"
-                             "|_|^^|_|_[]_|\n");
+                             "|_|^^|_|_[]_|  ");
 
     designs[7] = (char*) malloc(40 * sizeof(char));
     snprintf(designs[7], 40, "  \\ o /\n"
                              "    Q  \n"
                              "   / \\ \n"
-                             "LUCKY DAY\n");
+                             "LUCKY DAY  ");
 
     designs[8] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[8], 100, "|---PRISON---|| \n"
                              "| | | | | | | | \n"
                              "| | | | | | | | \n"
                              "| | | | | | | | \n"
-                             "``````````````` \n");
+                             "``````````````` ");
     designs[9] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[9], 100, " ____n____\n"
                               "|         | \n"
-                              "|__START__|\n");
+                              "|__START__|");
 
     return designs;
 }

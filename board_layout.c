@@ -134,7 +134,6 @@ void getTilesAttr() {
 }
 
 void displayTiles() {
-    printf("Treasure Data:\n");
     for (int i = 0; i < i_trav; i++) {
         printf("Row %d:\n", i + 1);
         printf("Treasure: %s\n", treasure[i]);
@@ -201,7 +200,7 @@ void getBoardAttr() {
     } else {
         // Allocate memory for each array to store column values for 100 rows
         tile = (char**)malloc(sizeof(char*) * MAX_ROWS); 
-        action = (char**)malloc(sizeof(char*) * MAX_ROWS); 
+        action = (char**)malloc(sizeof(char*) * 500); 
 
         char buffer[1024]; // buffer to store each line of the CSV
         while (fgets(buffer, sizeof(buffer), fp)) {
@@ -234,7 +233,7 @@ void getBoardAttr() {
                     }
                     strcpy(tile[i_board], value);
                 } else if (column == 1) {
-                    action[i_board] = (char*)malloc((strlen(value) + 1) * sizeof(char));
+                    action[i_board] = (char*)malloc(500 * sizeof(char));
                     if (action[i_board] == NULL) {
                         printf("Memory allocation failed\n");
                         return;
@@ -253,9 +252,33 @@ void getBoardAttr() {
     }
 }
 
+void attrProperty(int i,int randomIndex){
+    strcat(action[i], " ");
+    strcat(action[i],house[randomIndex]);
+    printf("%s \n\n",action[i]);
+}
+
+void attrLuck(int i,int randomIndex){
+    strcat(action[i], ": ");
+    strcat(action[i],treasure[randomIndex]);
+    printf("%s \n\n",action[i]);
+}
+
+void attrAirport(int i,int randomIndex){
+    strcat(action[i], " ");
+    strcat(action[i],airport[randomIndex]);
+    printf("%s \n\n",action[i]);
+}
+
+void attrOffice(int i,int randomIndex){
+    strcat(action[i], " ");
+    strcat(action[i], company[randomIndex]);
+    strcat(action[i], " Office");
+    printf("%s \n\n",action[i]);
+}
+
 //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start
 void displayBoard() {
-    printf("Treasure Data:\n");
     getTilesAttr();
     char **designs = design();
     if (!designs) {
@@ -268,30 +291,30 @@ void displayBoard() {
     //printf("Array size %d \n", arr_size);
     srand(time(NULL));
     for (int i = 0; i < i_board; i++) {
-        printf("Tile: %s\n", tile[i]);
+        //printf("Tile: %s\n", tile[i]);
         if (i == 0){
-            printf("%s", designs[9]);
+            printf("%s %-30s \n\n", designs[9], action[i]);
         } else if (strstr(tile[i], "Property") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[0]);
-            printf("%s%s \n",action[i],house[randomIndex]);
+            attrProperty(i,randomIndex);
         } else if (strstr(tile[i], "Airport") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[3]);
-            printf("%s%s \n",action[i],airport[randomIndex]);
+            attrAirport(i,randomIndex);
         } else if (strstr(tile[i], "Luck") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[7]);
-            printf("%s%s \n",action[i],treasure[randomIndex]);
+            attrLuck(i,randomIndex);
         } else if (strstr(tile[i], "Prison") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[8]);
-            printf("%s%s \n",action[i], "Pay Rs 2500 as a bribe to get bail");
+            printf("%s%s \n\n",action[i], ": Pay Rs 2500 as a bribe to get bail");
         } else if (strstr(tile[i], "Office") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[6]);
-            printf("%s%s \n",action[i],company[randomIndex]);
-        }
+            attrOffice(i,randomIndex);
+        } 
         //printf("\n");
     }
 }
