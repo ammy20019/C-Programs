@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <pthread.h>
 #include "character.h"
 #include "board_layout.h"
 
@@ -130,8 +131,13 @@ int main() {
         return 1;  
     }
     //board_layout();
-    getBoardAttr();
-    displayBoard();
+    pthread_t thread[2]; 
+    pthread_create(&thread[0], NULL, getBoardAttr, NULL);
+    //pthread_create(&thread[1], NULL, displayBoard, NULL);
+    pthread_join(thread[0], NULL);
+    pthread_create(&thread[1], NULL, displayBoard, NULL);
+    pthread_join(thread[1], NULL);
+    //displayBoard();
     exit(0);
     //function to have the player details
     get_Character_Details();
@@ -147,4 +153,4 @@ int main() {
     freeTilesMemory();
 }
 
-//cmd to execute script: gcc monopoly.c character.c -o monopoly && ./monopoly
+//cmd to execute script: gcc monopoly.c character.c bord_layout.c -o monopoly && ./monopoly

@@ -191,12 +191,13 @@ char** action = NULL;
 int row_b = 0;
 int i_board = 0;
 //need to edit this, kept as a placeholder ..modify this to load board details
-void getBoardAttr() {
+void *getBoardAttr(void *args) {
     FILE* fp = fopen("board.csv", "r");
 
     if (!fp) {
         printf("Can't open file\n");
-        return;
+        exit(0);
+        return NULL;
     } else {
         // Allocate memory for each array to store column values for 100 rows
         tile = (char**)malloc(sizeof(char*) * MAX_ROWS); 
@@ -229,14 +230,16 @@ void getBoardAttr() {
                     tile[i_board] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (tile[i_board] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(1);
+                        return NULL;
                     }
                     strcpy(tile[i_board], value);
                 } else if (column == 1) {
                     action[i_board] = (char*)malloc(500 * sizeof(char));
                     if (action[i_board] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(1);
+                        return NULL;
                     }
                     strcpy(action[i_board], value);
                 }
@@ -250,6 +253,7 @@ void getBoardAttr() {
         }
         fclose(fp);
     }
+    return NULL;
 }
 
 void attrProperty(int i,int randomIndex){
@@ -278,7 +282,7 @@ void attrOffice(int i,int randomIndex){
 }
 
 //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start
-void displayBoard() {
+void *displayBoard(void *args) {
     getTilesAttr();
     char **designs = design();
     if (!designs) {
@@ -317,4 +321,5 @@ void displayBoard() {
         } 
         //printf("\n");
     }
+    return NULL;
 }
