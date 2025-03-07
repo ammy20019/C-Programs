@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <pthread.h>
 #define MAX_ROWS 100
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -28,12 +29,13 @@ double money = 10000.00;
 int char_row = 0;
 int char_trav = 0;
 
-void get_Character_Details() {
+void *get_Character_Details(void *args) {
     FILE* fp = fopen("characters.csv", "r");
 
     if (!fp) {
         printf("Can't open file\n");
-        return;
+        exit(0);
+        return NULL;
     } else {
         // Allocate memory for each array to store column values for 100 rows
         character = (char**)malloc(sizeof(char*) * MAX_ROWS); 
@@ -70,7 +72,8 @@ void get_Character_Details() {
                     character[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (character[char_trav] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(0);
+                        return NULL;
                     }
                     strcpy(character[char_trav], value);
                 } else if (column == 1) {
@@ -79,7 +82,8 @@ void get_Character_Details() {
                     nick_name[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (name[char_trav] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(0);
+                        return NULL;
                     }
                     sscanf(value, "%s %*s %s", name1, name2);
                     snprintf(full_name, sizeof(full_name), "%s %s", name1, name2);
@@ -89,21 +93,24 @@ void get_Character_Details() {
                     sp_ability[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (sp_ability[char_trav] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(0);
+                        return NULL;
                     }
                     strcpy(sp_ability[char_trav], value);
                 } else if (column == 3) {
                     backstory[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (backstory[char_trav] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(0);
+                        return NULL;
                     }
                     strcpy(backstory[char_trav], value);
                 } else if (column == 4) {
                     personality[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (personality[char_trav] == NULL) {
                         printf("Memory allocation failed\n");
-                        return;
+                        exit(0);
+                        return NULL;
                     }
                     strcpy(personality[char_trav], value);
                 }
@@ -115,9 +122,10 @@ void get_Character_Details() {
         }
         fclose(fp);
     }
+    return NULL;
 }
 
-void display_Character_Details() {
+void *display_Character_Details(void *args) {
     printf("[[[[[[[[[[[[[[[[[[[[[[[[[  CHARACTER LOBBY  ]]]]]]]]]]]]]]]]]]]]]]]]]]]\n");
     for (int i = 0; i < char_trav; i++) {
         char ch;
@@ -139,21 +147,31 @@ void display_Character_Details() {
         ch = getchar();
         if (ch == '\n') {
             printf("[][] Loading character details [][] \n");
-            sleep(2);
+            //sleep(2);
             system("clear");
         } else {
             printf("You didn't press Enter!\n");
-            sleep(10);
+            sleep(5);
         }
     }
+    return NULL;
 }
 
 void Confirmed_character(char* nickname,char* personality,char* speciality){
+    char ch;
     system("clear");
     printf(YELLOW "[_] Hey %s, Welcome to Switzerland! \n\n[_] I'm Mia, I will be assisting towards your journey in Switzerland \n\n[_] You have Rs %.2f with you in cash\n\n[_] Surviving and living your life the fullest is your goal\n\n[_] Each decision you make will either make you a millionare or bankrupt\n\n" RESET, nickname, money);
     selected_player = nickname;
     selected_personality = personality;
     selected_speciality = speciality;
+    printf("PRESS ENTER TO BEGIN YOUR JOURNEY! \n");
+    getchar();  // This is to clear out any leftover input from previous operations
+    ch = getchar();
+    if (ch == '\n') {
+        system("clear");
+    } else{
+        Confirmed_character(nickname, personality, speciality);
+    }
 }
 
 void player_setup(int choice){
@@ -187,7 +205,10 @@ void player_setup(int choice){
             printf("[][] Loading character details [][] \n");
             sleep(1);
             system("clear");
-            display_Character_Details();
+            pthread_t thread; 
+            pthread_create(&thread, NULL, display_Character_Details, NULL);
+            pthread_join(thread, NULL);
+            //display_Character_Details();
             printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
             //printf(RED "Error: Operation Failed\n" RESET);
             scanf("%d", &choice);

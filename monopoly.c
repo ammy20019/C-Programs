@@ -131,25 +131,24 @@ int main() {
         return 1;  
     }
     //board_layout();
-    pthread_t thread[2]; 
-    pthread_create(&thread[0], NULL, getBoardAttr, NULL);
-    //pthread_create(&thread[1], NULL, displayBoard, NULL);
-    pthread_join(thread[0], NULL);
+    pthread_t thread[6]; 
+    pthread_create(&thread[0], NULL, get_Character_Details, NULL);
+    pthread_create(&thread[1], NULL, getBoardAttr, NULL);
     pthread_create(&thread[1], NULL, displayBoard, NULL);
+    pthread_join(thread[0], NULL);
     pthread_join(thread[1], NULL);
-    //displayBoard();
-    exit(0);
-    //function to have the player details
-    get_Character_Details();
-    display_Character_Details();
+    pthread_create(&thread[2], NULL, display_Character_Details, NULL);
+    pthread_join(thread[2], NULL);
     printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
     scanf("%d", &choice);
     player_setup(choice);
+    pthread_create(&thread[3], NULL, displayBoard, NULL);
+    pthread_join(thread[3], NULL);
 
-    free_Character_Details();
     exit(0);
-    getTilesAttr();
-    displayTiles();
+    free_Character_Details();
+    //getTilesAttr();
+    //displayTiles();
     freeTilesMemory();
 }
 
