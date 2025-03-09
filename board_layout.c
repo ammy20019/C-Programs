@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h> 
 
 #include "character.h"
 #define RESET   "\033[0m"
@@ -176,14 +177,11 @@ void board_layout(){
 
     if (!designs) {
         printf("Their was an issue while allocating memory \n");
-        exit(1);  // Exit if there was an error in memory allocation
+        exit(1); 
     }
-
-    // Print each design
     for (int i = 0; i < 9; i++) {
         printf("%s\n", designs[i]);
     }
-
     //free_design(designs); need to take care of this later
 }
 
@@ -191,7 +189,6 @@ char** tile= NULL;
 char** action = NULL;
 int row_b = 0;
 int i_board = 0;
-//need to edit this, kept as a placeholder ..modify this to load board details
 void *getBoardAttr(void *args) {
     FILE* fp = fopen("board.csv", "r");
 
@@ -244,12 +241,9 @@ void *getBoardAttr(void *args) {
                     }
                     strcpy(action[i_board], value);
                 }
-                // Move to the next token
                 value = strtok(NULL, ",");
                 column++;
             }
-
-            // Move to the next row
             i_board++;  
         }
         fclose(fp);
@@ -261,25 +255,19 @@ void update_file_player_details(const char *p_name, const char *mod_value, const
     FILE *file, *temp_file;
     char line[2000];
     char playerName[100], character[100];
-    double assets; // Assuming assets is a double (representing numeric value)
+    double assets;
     int found = 0;
-
-    // Open the original file in read mode
     file = fopen("player_details.csv", "r");
     if (file == NULL) {
         perror("Error opening file");
         return;
     }
-
-    // Create a temporary file to store updated data
     temp_file = fopen("temp_player_details.csv", "w");
     if (temp_file == NULL) {
         perror("Error opening temp file");
         fclose(file);
         return;
     }
-
-    // Write the header to the temporary file
     if (fgets(line, sizeof(line), file) != NULL) {
         fputs(line, temp_file); // Write the header to the temp file
     }
@@ -289,15 +277,12 @@ void update_file_player_details(const char *p_name, const char *mod_value, const
             playerName[strcspn(playerName, "\n")] = 0;  // Remove the newline character
             character[strcspn(character, "\n")] = 0;
             //printf("Parsed values: %s, %s, %.2f\n", playerName, character, assets);
-            // Check if the player name matches the input
             if (strcmp(playerName, p_name) == 0) {
-                // If the specified column is "Assets", update the assets field
                 if (strcmp(mod_column, "Assets") == 0) {
                     assets = atof(mod_value);  // Convert the string value to a double
                 }
                 found = 1;
             }
-            // Write the modified (or unmodified) line to the temporary file
             fprintf(temp_file, "%s,%s,%.2f\n", playerName, character, assets);
         }
     }
@@ -310,7 +295,7 @@ void update_file_player_details(const char *p_name, const char *mod_value, const
         printf("Player details updated successfully.\n");
     } else {
         printf("Player not found!\n");
-        remove("temp_player_details.csv"); // Remove the temporary file if no update was made
+        remove("temp_player_details.csv");
     }
 }
 
@@ -319,6 +304,23 @@ void attrProperty(int i,int randomIndex){
     strcat(action[i],house[randomIndex]);
     printf("%s \n\n",action[i]);
     //will define the sequence once the player lands in property
+    char ch;
+    printf("Do you want to buy this property for Rs5000 or want to pay rent of Rs350 ? (B/R) : ");
+    scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
+    if (ch == 'B' || ch == 'b') {
+        printf("You chose to buy this property. Proceeding...\n");
+        money = transaction(selected_player,money,"-5000");
+    } else if (ch == 'R' || ch == 'r') {
+        printf("You chose to pay the rent for the stay. Proceeding...\n");
+        money = transaction(selected_player,money,"-350");
+    } else {
+        printf("Invalid input. Please enter 'B' or 'R'.\n");
+        attrProperty(i,randomIndex);
+    }
+    printf("-------------------------------------------------------\n");
+    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    printf("-------------------------------------------------------\n\n");
+    sleep(2);
     }
 
 void attrLuck(int i,int randomIndex){
@@ -380,5 +382,9 @@ void *displayBoard(void *args) {
         } 
         //printf("\n");
     }
+    char money_str[20];
+    sprintf(money_str, "%.2f", money);  //cconvert int to str first
+    printf("===Fetched player name is %s \n", player_name);
+    update_file_player_details(player_name,money_str,"Assets");
     return NULL;
 }

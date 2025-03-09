@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <pthread.h>
+#include <time.h>
 #include "board_layout.h"
 #define MAX_ROWS 100
 #define RESET   "\033[0m"
@@ -30,6 +31,27 @@ char* player_name;
 
 int char_row = 0;
 int char_trav = 0;
+
+double transaction(const char* targetPlayer, double total_amt, char* transaction_amt){
+    FILE *file;
+    char line[200];
+    char playerName[100], character[100];
+    double assets;
+    file = fopen("player_details.csv", "r");
+    fgets(line, sizeof(line), file);
+    while (fgets(line, sizeof(line), file)) {
+        if (sscanf(line, "%99[^,],%99[^,],%lf", playerName, character, &assets) == 3) {
+            if (strcmp(playerName, targetPlayer) == 0) {
+                printf("Checking current assets status: %.2f\n", assets);
+                total_amt = assets;
+                break; 
+            }
+        }
+    }
+    fclose(file);
+    total_amt += atoi(transaction_amt);
+    return total_amt;
+}
 
 void *get_Character_Details(void *args) {
     FILE* fp = fopen("characters.csv", "r");
@@ -130,7 +152,7 @@ void *get_Character_Details(void *args) {
 void *display_Character_Details(void *args) {
     system("clear");
     printf("[[[[[[[[[[[[[[[[[[[[[[[[[  CHARACTER LOBBY  ]]]]]]]]]]]]]]]]]]]]]]]]]]]\n");
-    printf("Choose a character, that you would like to play in this game, each player has it's own rait \n\n");
+    printf("Choose a character, that you would like to play in this game, each player has it's own trait \n\n");
     for (int i = 0; i < char_trav; i++) {
         char ch;
         printf(YELLOW "+----------------------------------------------------+\n");
@@ -271,10 +293,10 @@ void free_Character_Details() {
     personality = NULL;
     nick_name = NULL;
 }
-
+char **designs ;
 char** design() {
     // Dynamically allocate memory for the array of char pointers
-    char **designs = (char**) malloc(9 * sizeof(char*)); //hardcode 9 element
+    designs = (char**) malloc(9 * sizeof(char*)); //hardcode 9 element
     if (!designs) {
         printf("Memory allocation failed for designs array!\n");
         return NULL;
@@ -345,11 +367,15 @@ char** design() {
 int register_player(){
     char username[20];
     printf(GREEN "WELCOME TO ASSETOPIA \n" RESET);
-    printf("Please register your profile, Enter your username \n\n");
+    printf("Please register your profile, \n Enter your username : ");
     fgets(username, 20, stdin);
     username[strcspn(username, "\n")] = '\0';
-    printf(GREEN "THANK YOU FOR REGISTERING WITH US \n\n\n" RESET);
-    sleep(1);
+    player_name = (char*)malloc(strlen(username) + 1); // +1 for null terminator
+    if (player_name == NULL) {
+        printf("Memory allocation failed while registering\n");
+        return -1; 
+    }
+    strcpy(player_name, username);
     FILE *file;
     file = fopen("player_details.csv", "a");  // Open in append mode
     if (file == NULL) {
@@ -358,16 +384,13 @@ int register_player(){
     }
     fprintf(file, "%s,%s,%.2f,%s\n", username,selected_player, money,"");
     fclose(file);
-
-    //update_file_player_details(username,"HIOIO","Character");
-    char money_str[10];
-    sprintf(money_str, "%.2f", money);
-    //update_file_player_details(username,money_str,"Money");
+    printf(GREEN "THANK YOU FOR REGISTERING WITH US \n\n\n" RESET);
+    sleep(1);
+    //update_file_player_details(player_name,"89999.09","Assets");
     return 0;
 }
 
-
-void free_design(char** designs){
+void free_design(){
     for (int i = 0; i < 10; i++) {
         free(designs[i]);  // Free each string
     }
