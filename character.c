@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <pthread.h>
+#include "board_layout.h"
 #define MAX_ROWS 100
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -25,6 +26,7 @@ char* selected_player;
 char* selected_personality;
 char* selected_speciality;
 double money = 10000.00;
+char* player_name;
 
 int char_row = 0;
 int char_trav = 0;
@@ -126,7 +128,9 @@ void *get_Character_Details(void *args) {
 }
 
 void *display_Character_Details(void *args) {
+    system("clear");
     printf("[[[[[[[[[[[[[[[[[[[[[[[[[  CHARACTER LOBBY  ]]]]]]]]]]]]]]]]]]]]]]]]]]]\n");
+    printf("Choose a character, that you would like to play in this game, each player has it's own rait \n\n");
     for (int i = 0; i < char_trav; i++) {
         char ch;
         printf(YELLOW "+----------------------------------------------------+\n");
@@ -144,6 +148,7 @@ void *display_Character_Details(void *args) {
         // printf("+----------------------------+\n");
         printf("\n");
         printf("PRESS ENTER TO VIEW OTHER CHARACTER \n");
+        //while ((ch = getchar()) != '\n' && ch != EOF);
         ch = getchar();
         if (ch == '\n') {
             printf("[][] Loading character details [][] \n");
@@ -198,7 +203,7 @@ void player_setup(int choice){
         }
         if (tolower(ch_i) == 'y') {
             printf("MOVING FORWARD WITH THE SELECTION\n");
-            sleep(3);
+            sleep(2);
             Confirmed_character(nick_name[choice-1], personality[choice-1],sp_ability[choice-1]);
             break;
         } else if (tolower(ch_i) == 'n') {
@@ -336,6 +341,31 @@ char** design() {
 
     return designs;
 }
+
+int register_player(){
+    char username[20];
+    printf(GREEN "WELCOME TO ASSETOPIA \n" RESET);
+    printf("Please register your profile, Enter your username \n\n");
+    fgets(username, 20, stdin);
+    username[strcspn(username, "\n")] = '\0';
+    printf(GREEN "THANK YOU FOR REGISTERING WITH US \n\n\n" RESET);
+    sleep(1);
+    FILE *file;
+    file = fopen("player_details.csv", "a");  // Open in append mode
+    if (file == NULL) {
+        perror("Error Registering Your Data, Please check all resources are downloaded");
+        return 1;
+    }
+    fprintf(file, "%s,%s,%.2f,%s\n", username,selected_player, money,"");
+    fclose(file);
+
+    //update_file_player_details(username,"HIOIO","Character");
+    char money_str[10];
+    sprintf(money_str, "%.2f", money);
+    //update_file_player_details(username,money_str,"Money");
+    return 0;
+}
+
 
 void free_design(char** designs){
     for (int i = 0; i < 10; i++) {

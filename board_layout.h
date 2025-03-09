@@ -6,5 +6,6 @@ void *getBoardAttr(void *args);
 void attrOffice(int i,int randomIndex);
 void attrAirport(int i,int randomIndex);
 void attrLuck(int i,int randomIndex);
+void update_file_player_details(const char *p_name, const char *mod_value, const char *mod_column);
 void attrProperty(int i,int randomIndex);
 void *displayBoard(void *args);

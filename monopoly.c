@@ -132,18 +132,20 @@ int main() {
     }
     //board_layout();
     pthread_t thread[6]; 
-    pthread_create(&thread[0], NULL, get_Character_Details, NULL);
-    pthread_create(&thread[1], NULL, getBoardAttr, NULL);
-    pthread_create(&thread[1], NULL, displayBoard, NULL);
-    pthread_join(thread[0], NULL);
+    //pthread_create(&thread[0], NULL, register_player, NULL);
+    pthread_create(&thread[1], NULL, get_Character_Details, NULL);
+    pthread_create(&thread[2], NULL, getBoardAttr, NULL);
+    //pthread_join(thread[0], NULL);
     pthread_join(thread[1], NULL);
-    pthread_create(&thread[2], NULL, display_Character_Details, NULL);
     pthread_join(thread[2], NULL);
+    pthread_create(&thread[3], NULL, display_Character_Details, NULL);
+    pthread_join(thread[3], NULL);
     printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
     scanf("%d", &choice);
     player_setup(choice);
-    pthread_create(&thread[3], NULL, displayBoard, NULL);
-    pthread_join(thread[3], NULL);
+    register_player();
+    pthread_create(&thread[4], NULL, displayBoard, NULL);
+    pthread_join(thread[4], NULL);
 
     exit(0);
     free_Character_Details();

@@ -9,6 +9,7 @@
 #define GREEN   "\033[32m"
 #define YELLOW  "\033[33m"
 #define MAX_ROWS 100
+#define MAX_LINE_LENGTH 1024
 
 char** treasure = NULL;
 char** place = NULL;
@@ -256,11 +257,69 @@ void *getBoardAttr(void *args) {
     return NULL;
 }
 
+void update_file_player_details(const char *p_name, const char *mod_value, const char *mod_column) {
+    FILE *file, *temp_file;
+    char line[2000];
+    char playerName[100], character[100];
+    double assets; // Assuming assets is a double (representing numeric value)
+    int found = 0;
+
+    // Open the original file in read mode
+    file = fopen("player_details.csv", "r");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    // Create a temporary file to store updated data
+    temp_file = fopen("temp_player_details.csv", "w");
+    if (temp_file == NULL) {
+        perror("Error opening temp file");
+        fclose(file);
+        return;
+    }
+
+    // Write the header to the temporary file
+    if (fgets(line, sizeof(line), file) != NULL) {
+        fputs(line, temp_file); // Write the header to the temp file
+    }
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (sscanf(line, "%99[^,],%99[^,],%lf", playerName, character, &assets) == 3) {
+            // Trim any newlines or excess spaces
+            playerName[strcspn(playerName, "\n")] = 0;  // Remove the newline character
+            character[strcspn(character, "\n")] = 0;
+            //printf("Parsed values: %s, %s, %.2f\n", playerName, character, assets);
+            // Check if the player name matches the input
+            if (strcmp(playerName, p_name) == 0) {
+                // If the specified column is "Assets", update the assets field
+                if (strcmp(mod_column, "Assets") == 0) {
+                    assets = atof(mod_value);  // Convert the string value to a double
+                }
+                found = 1;
+            }
+            // Write the modified (or unmodified) line to the temporary file
+            fprintf(temp_file, "%s,%s,%.2f\n", playerName, character, assets);
+        }
+    }
+    fclose(file);
+    fclose(temp_file);
+    // If the player was found and modified, replace the original file with the temporary file
+    if (found) {
+        remove("player_details.csv");
+        rename("temp_player_details.csv", "player_details.csv");
+        printf("Player details updated successfully.\n");
+    } else {
+        printf("Player not found!\n");
+        remove("temp_player_details.csv"); // Remove the temporary file if no update was made
+    }
+}
+
 void attrProperty(int i,int randomIndex){
     strcat(action[i], " ");
     strcat(action[i],house[randomIndex]);
     printf("%s \n\n",action[i]);
-}
+    //will define the sequence once the player lands in property
+    }
 
 void attrLuck(int i,int randomIndex){
     strcat(action[i], ": ");
