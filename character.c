@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <time.h>
+#include <math.h>
 #include "board_layout.h"
 #define MAX_ROWS 100
 #define RESET   "\033[0m"
@@ -32,24 +33,31 @@ char* player_name;
 int char_row = 0;
 int char_trav = 0;
 
-double transaction(const char* targetPlayer, double total_amt, char* transaction_amt){
-    FILE *file;
-    char line[200];
-    char playerName[100], character[100];
-    double assets;
-    file = fopen("player_details.csv", "r");
-    fgets(line, sizeof(line), file);
-    while (fgets(line, sizeof(line), file)) {
-        if (sscanf(line, "%99[^,],%99[^,],%lf", playerName, character, &assets) == 3) {
-            if (strcmp(playerName, targetPlayer) == 0) {
-                printf("Checking current assets status: %.2f\n", assets);
-                total_amt = assets;
-                break; 
-            }
-        }
+double transaction(const char* targetPlayer, double total_amt, double transaction_amt){
+    if (total_amt < fabs(transaction_amt)){
+        printf("Insufficients funds for Transaction, Invalid request \n ");
+        return total_amt;
+    } else if(total_amt == 0){
+        printf("You have gone bankrupt! Exiting game...! \n");
+        exit(0);
     }
-    fclose(file);
-    total_amt += atoi(transaction_amt);
+    // FILE *file;
+    // char line[200];
+    // char playerName[100], character[100];
+    // double assets;
+    // file = fopen("player_details.csv", "r");
+    // fgets(line, sizeof(line), file);
+    // while (fgets(line, sizeof(line), file)) {
+    //     if (sscanf(line, "%99[^,],%99[^,],%lf", playerName, character, &assets) == 3) {
+    //         if (strcmp(playerName, targetPlayer) == 0) {
+    //             printf("Checking current assets status: %.2f\n", assets);
+    //             total_amt = assets;
+    //             break; 
+    //         }
+    //     }
+    // }
+    // fclose(file);
+    total_amt += transaction_amt;
     return total_amt;
 }
 
@@ -364,6 +372,35 @@ char** design() {
     return designs;
 }
 
+int check_if_already_registered(){
+    char line[300];
+    char player_name_from_file[300];
+    char character[300];
+    double assets;
+    FILE *file_read = fopen("player_details.csv", "r");
+    if (file_read == NULL) {
+        printf("Could not open file.\n");
+        return 0;
+    }
+
+    fgets(line, sizeof(line), file_read);
+
+    // Read each line and check if the player exists
+    while (fgets(line, sizeof(line), file_read) != NULL) {
+        // Parse the line
+        if (sscanf(line, "%[^,],%[^,],%lf", player_name_from_file, character, &assets) == 3) {
+            // Check if the player name matches the input
+            if (strcmp(player_name, player_name_from_file) == 0) {
+                fclose(file_read);
+                printf("Player already registered! Welcome back %s \n",player_name);
+                return 1;
+            }
+        }
+    }
+    fclose(file_read);
+    return 0;
+}
+
 int register_player(){
     char username[20];
     printf(GREEN "WELCOME TO ASSETOPIA \n" RESET);
@@ -376,18 +413,21 @@ int register_player(){
         return -1; 
     }
     strcpy(player_name, username);
+    if (check_if_already_registered()){
+        return 1;
+    }
     FILE *file;
     file = fopen("player_details.csv", "a");  // Open in append mode
     if (file == NULL) {
         perror("Error Registering Your Data, Please check all resources are downloaded");
-        return 1;
+        return 0;
     }
-    fprintf(file, "%s,%s,%.2f,%s\n", username,selected_player, money,"");
+    fprintf(file, "%s,%s,%.2f\n", username,selected_player, money);
     fclose(file);
     printf(GREEN "THANK YOU FOR REGISTERING WITH US \n\n\n" RESET);
     sleep(1);
     //update_file_player_details(player_name,"89999.09","Assets");
-    return 0;
+    return 1;
 }
 
 void free_design(){

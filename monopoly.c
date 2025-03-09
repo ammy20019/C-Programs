@@ -134,7 +134,6 @@ int main() {
     //test area
     //update_file_player_details("Jojo Kim","4300","Assets");
     //exit(0);
-
     pthread_t thread[6]; 
     pthread_create(&thread[1], NULL, get_Character_Details, NULL);
     pthread_create(&thread[2], NULL, getBoardAttr, NULL);
@@ -148,13 +147,13 @@ int main() {
     register_player();
     pthread_create(&thread[4], NULL, displayBoard, NULL);
     pthread_join(thread[4], NULL);
-
-    free_Character_Details();
+    
     free_design();
     free(player_name);
     //getTilesAttr();
     //displayTiles();
     freeTilesMemory();
+    free_Character_Details();
 }
 
 //cmd to execute script: gcc monopoly.c character.c bord_layout.c -o monopoly && ./monopoly

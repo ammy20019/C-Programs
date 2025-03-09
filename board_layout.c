@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h> 
+#include <math.h>
 
 #include "character.h"
 #define RESET   "\033[0m"
@@ -299,20 +300,29 @@ void update_file_player_details(const char *p_name, const char *mod_value, const
     }
 }
 
+void make_negative_double(double *num) {
+    if (*num > 0) {
+        *num = -(*num);  // Multiply the number by -1 to make it negative
+    }
+}
+
+double rent[8] = {250.0, 450.0, 400.0, 140.0, 620.0, 280.0, 300.0, 800.0};
 void attrProperty(int i,int randomIndex){
     strcat(action[i], " ");
     strcat(action[i],house[randomIndex]);
     printf("%s \n\n",action[i]);
     //will define the sequence once the player lands in property
     char ch;
-    printf("Do you want to buy this property for Rs5000 or want to pay rent of Rs350 ? (B/R) : ");
+    printf("Do you want to buy this property for Rs%.2f or want to pay rent of Rs%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),rent[randomIndex]);
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
-        money = transaction(selected_player,money,"-5000");
+        make_negative_double(&h_amt[randomIndex]);
+        money = transaction(selected_player,money,h_amt[randomIndex]);
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the rent for the stay. Proceeding...\n");
-        money = transaction(selected_player,money,"-350");
+        make_negative_double(&rent[randomIndex]);
+        money = transaction(selected_player,money,rent[randomIndex]);
     } else {
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
@@ -321,18 +331,44 @@ void attrProperty(int i,int randomIndex){
     printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
     printf("-------------------------------------------------------\n\n");
     sleep(2);
-    }
+}
 
 void attrLuck(int i,int randomIndex){
     strcat(action[i], ": ");
     strcat(action[i],treasure[randomIndex]);
     printf("%s \n\n",action[i]);
+    //defining flow for the luck attribute
+    money = transaction(selected_player,money,t_amt[randomIndex]);
+    printf("-------------------------------------------------------\n");
+    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    printf("-------------------------------------------------------\n\n");
+    sleep(2);
 }
 
 void attrAirport(int i,int randomIndex){
     strcat(action[i], " ");
     strcat(action[i],airport[randomIndex]);
     printf("%s \n\n",action[i]);
+    //defining flow for airport
+    char ch;
+    double fee = -100.00;
+    printf("Do you want to buy this Airport for Rs%.2f or want to pay parking fee of Rs%.2f ? (B/R) : ",fabs(a_amt[randomIndex]),fabs(fee));
+    scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
+    if (ch == 'B' || ch == 'b') {
+        printf("You chose to buy this property. Proceeding...\n");
+        make_negative_double(&a_amt[randomIndex]);
+        money = transaction(selected_player,money,a_amt[randomIndex]);
+    } else if (ch == 'R' || ch == 'r') {
+        printf("You chose to pay the rent for parking. Proceeding...\n");
+        money = transaction(selected_player,money,fee);
+    } else {
+        printf("Invalid input. Please enter 'B' or 'R'.\n");
+        attrAirport(i,randomIndex);
+    }
+    printf("-------------------------------------------------------\n");
+    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    printf("-------------------------------------------------------\n\n");
+    sleep(2);
 }
 
 void attrOffice(int i,int randomIndex){
@@ -340,6 +376,36 @@ void attrOffice(int i,int randomIndex){
     strcat(action[i], company[randomIndex]);
     strcat(action[i], " Office");
     printf("%s \n\n",action[i]);
+    //flow for buying office
+    char ch;
+    printf("Do you want to buy this Company for Rs%.2f or want to pay visiting fee of Rs%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),rent[randomIndex]);
+    scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
+    if (ch == 'B' || ch == 'b') {
+        printf("You chose to buy this Office. Proceeding...\n");
+        make_negative_double(&c_amt[randomIndex]);
+        money = transaction(selected_player,money,c_amt[randomIndex]);
+    } else if (ch == 'R' || ch == 'r') {
+        printf("You chose to pay the visiting fee in the Office. Proceeding...\n");
+        make_negative_double(&rent[randomIndex]);
+        money = transaction(selected_player,money,rent[randomIndex]);
+    } else {
+        printf("Invalid input. Please enter 'B' or 'R'.\n");
+        attrProperty(i,randomIndex);
+    }
+    printf("-------------------------------------------------------\n");
+    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    printf("-------------------------------------------------------\n\n");
+    sleep(2);
+}
+
+void attrPrison(int i,int randomIndex){
+    double bail_amt = -3000;
+    printf("%s. Pay Rs%.2f to get bail \n\n",action[i],fabs(bail_amt));
+    money = transaction(selected_player,money,bail_amt);
+    printf("-------------------------------------------------------\n");
+    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    printf("-------------------------------------------------------\n\n");
+    sleep(2);
 }
 
 //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start
@@ -374,7 +440,7 @@ void *displayBoard(void *args) {
         } else if (strstr(tile[i], "Prison") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[8]);
-            printf("%s%s \n\n",action[i], ": Pay Rs 2500 as a bribe to get bail");
+            attrPrison(i,randomIndex);
         } else if (strstr(tile[i], "Office") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[6]);

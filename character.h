@@ -15,7 +15,8 @@ extern char* player_name;
 
 #endif
 void say_hello(void);
-double transaction(const char* targetPlayer, double total_amt, char* transaction_amt);
+double transaction(const char* targetPlayer, double total_amt,double transaction_amt);
+int check_if_already_registered();
 int register_player();
 void *get_Character_Details(void *args);
 void *display_Character_Details(void *args);
