@@ -34,9 +34,16 @@ int char_row = 0;
 int char_trav = 0;
 
 double transaction(const char* targetPlayer, double total_amt, double transaction_amt){
-    if (total_amt < fabs(transaction_amt)){
+    if ((total_amt + transaction_amt < 0) ){
+        double lower_amt_margin = total_amt / 2.5;
+        double max_amt_margin = total_amt / 4.8;
+        // Generate a random number between 0 and 1, then scale it to the range [lower_amt_margin, max_amt_margin]
+        double random_amt = (rand() / (double)RAND_MAX) * (max_amt_margin - lower_amt_margin) + lower_amt_margin; // Generate a random amt between the margins
         printf("Insufficients funds for Transaction, Invalid request \n ");
-        return total_amt;
+        printf("Cheque bounced, pay a fine of Rs %.2f to Bank \n", random_amt);
+        make_negative_double(&random_amt);
+        return transaction(targetPlayer,total_amt, random_amt);
+        //return total_amt;
     } else if(total_amt == 0){
         printf("You have gone bankrupt! Exiting game...! \n");
         exit(0);

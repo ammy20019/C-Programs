@@ -10,3 +10,4 @@ void attrLuck(int i,int randomIndex);
 void attrPrison(int i,int randomIndex);
 void update_file_player_details(const char *p_name, const char *mod_value, const char *mod_column);
 void *displayBoard(void *args);
+void make_negative_double(double *num);

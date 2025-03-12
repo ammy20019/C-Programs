@@ -29,7 +29,7 @@ int row = 0;
 int i_trav = 0;
 
 void getTilesAttr() {
-    FILE* fp = fopen("data.csv", "r");
+    FILE* fp = fopen("mix_data.csv", "r");
 
     if (!fp) {
         printf("Can't open file\n");
@@ -48,7 +48,7 @@ void getTilesAttr() {
         a_amt = (double*)malloc(sizeof(double) * MAX_ROWS);
         c_amt = (double*)malloc(sizeof(double) * MAX_ROWS);
 
-        char buffer[1024]; // buffer to store each line of the CSV
+        char buffer[2042]; // buffer to store each line of the CSV
         while (fgets(buffer, sizeof(buffer), fp)) {
             row++;
             if (row == 1) {
@@ -313,7 +313,7 @@ void attrProperty(int i,int randomIndex){
     printf("%s \n\n",action[i]);
     //will define the sequence once the player lands in property
     char ch;
-    printf("Do you want to buy this property for Rs%.2f or want to pay rent of Rs%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),rent[randomIndex]);
+    printf("Do you want to buy this property for Rs%.2f or want to pay rent of Rs%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),fabs(rent[randomIndex]));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
@@ -378,7 +378,7 @@ void attrOffice(int i,int randomIndex){
     printf("%s \n\n",action[i]);
     //flow for buying office
     char ch;
-    printf("Do you want to buy this Company for Rs%.2f or want to pay visiting fee of Rs%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),rent[randomIndex]);
+    printf("Do you want to buy this Company for Rs%.2f or want to pay visiting fee of Rs%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),fabs(rent[randomIndex]));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this Office. Proceeding...\n");
@@ -387,7 +387,7 @@ void attrOffice(int i,int randomIndex){
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the visiting fee in the Office. Proceeding...\n");
         make_negative_double(&rent[randomIndex]);
-        money = transaction(selected_player,money,rent[randomIndex]);
+        money = transaction(selected_player,money,fabs(rent[randomIndex]));
     } else {
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
@@ -410,7 +410,7 @@ void attrPrison(int i,int randomIndex){
 
 //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start
 void *displayBoard(void *args) {
-    getTilesAttr();
+    //getTilesAttr();
     char **designs = design();
     if (!designs) {
         printf("Their was an issue while allocating memory \n");

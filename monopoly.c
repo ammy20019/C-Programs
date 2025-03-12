@@ -145,6 +145,7 @@ int main() {
     scanf("%d", &choice);
     player_setup(choice);
     register_player();
+    getTilesAttr();
     pthread_create(&thread[4], NULL, displayBoard, NULL);
     pthread_join(thread[4], NULL);
     
