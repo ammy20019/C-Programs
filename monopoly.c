@@ -148,6 +148,9 @@ int main() {
     getTilesAttr();
     pthread_create(&thread[4], NULL, displayBoard, NULL);
     pthread_join(thread[4], NULL);
+    // Wait for the thread to finish execution
+    //pthread_join(interest_amt_thread, NULL);
+
     
     free_design();
     free(player_name);

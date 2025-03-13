@@ -2,16 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <pthread.h>
 #include <unistd.h> 
 #include <math.h>
 
 #include "character.h"
+#include "board_layout.h"
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"
 #define YELLOW  "\033[33m"
 #define MAX_ROWS 100
 #define MAX_LINE_LENGTH 1024
+
+double rent[8] = {250.0, 450.0, 400.0, 140.0, 620.0, 280.0, 300.0, 800.0};
+double interest_per[8] = {7.3, 3, 4, 6.2, 5, 6, 7, 8};
+int tenure[6] = {1,3,6,4,5,2};
 
 char** treasure = NULL;
 char** place = NULL;
@@ -300,13 +306,59 @@ void update_file_player_details(const char *p_name, const char *mod_value, const
     }
 }
 
+//code for interest amt on property bought
+// Function to calculate the increased amount after a percentage increase
+double increase_amount(double amt, double percent) {
+    return amt *  percent / 100;
+}
+
+// Thread function to handle the increase of the amount over time
+void* increase_amt(void* arg) {
+    thread_data_interest* data = (thread_data_interest*) arg;
+    double* amt = &(data->amt);  
+    double increase_percent = data->increase_percent;
+    int seconds_interval = data->seconds_interval; 
+    int tenure = data->tenure;
+    long long total_seconds = tenure * 30; 
+    long long intervals = total_seconds / seconds_interval;  // Number of intervals (30 sec each)
+    double curr_bal = 0;
+
+    for (long long i = 0; i < intervals; i++) {
+        sleep(seconds_interval);  // Sleep for the given interval before next increase
+        double interest_amt = increase_amount(*amt, increase_percent);  // Increase the amount by the given percentage
+        printf(GREEN "Received interest amount of : Rs %.2f \n" RESET, interest_amt);
+        //curr_bal = get_asset_from_file(selected_player);
+        printf("Current Balance %.2f \n", money);
+        //transaction(selected_player,money,*amt);
+        *amt += interest_amt;
+    }
+    return NULL;
+}
+
+pthread_t interest_amt_thread;
+thread_data_interest data;
+
+int get_interest_amt(double amount, double increase_percent,int tenure ){
+    printf("You will receive an interest of %.2f percent on your asset per month for %d months \n Interest Amount will be credited to your account every month till the tenure\n\n", increase_percent, tenure);
+    int seconds_interval = 30;  // 30 seconds interval, which is 1 month in this game
+    data.amt = amount;
+    data.increase_percent = increase_percent;
+    data.seconds_interval = seconds_interval;
+    data.tenure = tenure;
+
+    pthread_create(&interest_amt_thread, NULL, increase_amt, (void*)&data);
+
+    // // Wait for the thread to finish execution
+    // pthread_join(interest_amt_thread, NULL);
+    return 0;
+}
+
 void make_negative_double(double *num) {
     if (*num > 0) {
         *num = -(*num);  // Multiply the number by -1 to make it negative
     }
 }
 
-double rent[8] = {250.0, 450.0, 400.0, 140.0, 620.0, 280.0, 300.0, 800.0};
 void attrProperty(int i,int randomIndex){
     strcat(action[i], " ");
     strcat(action[i],house[randomIndex]);
@@ -317,6 +369,9 @@ void attrProperty(int i,int randomIndex){
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
+        //flow for interest on the property
+        get_interest_amt(h_amt[randomIndex], interest_per[randomIndex], tenure[randomIndex]);
+
         make_negative_double(&h_amt[randomIndex]);
         money = transaction(selected_player,money,h_amt[randomIndex]);
     } else if (ch == 'R' || ch == 'r') {
@@ -327,10 +382,10 @@ void attrProperty(int i,int randomIndex){
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
     }
-    printf("-------------------------------------------------------\n");
-    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    printf("-------------------------------------------------------\n\n");
-    sleep(2);
+    // printf("-------------------------------------------------------\n");
+    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    // printf("-------------------------------------------------------\n\n");
+    // sleep(2);
 }
 
 void attrLuck(int i,int randomIndex){
@@ -339,10 +394,10 @@ void attrLuck(int i,int randomIndex){
     printf("%s \n\n",action[i]);
     //defining flow for the luck attribute
     money = transaction(selected_player,money,t_amt[randomIndex]);
-    printf("-------------------------------------------------------\n");
-    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    printf("-------------------------------------------------------\n\n");
-    sleep(2);
+    // printf("-------------------------------------------------------\n");
+    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    // printf("-------------------------------------------------------\n\n");
+    // sleep(2);
 }
 
 void attrAirport(int i,int randomIndex){
@@ -365,10 +420,10 @@ void attrAirport(int i,int randomIndex){
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrAirport(i,randomIndex);
     }
-    printf("-------------------------------------------------------\n");
-    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    printf("-------------------------------------------------------\n\n");
-    sleep(2);
+    // printf("-------------------------------------------------------\n");
+    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    // printf("-------------------------------------------------------\n\n");
+    // sleep(2);
 }
 
 void attrOffice(int i,int randomIndex){
@@ -392,20 +447,20 @@ void attrOffice(int i,int randomIndex){
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
     }
-    printf("-------------------------------------------------------\n");
-    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    printf("-------------------------------------------------------\n\n");
-    sleep(2);
+    // printf("-------------------------------------------------------\n");
+    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    // printf("-------------------------------------------------------\n\n");
+    // sleep(2);
 }
 
 void attrPrison(int i,int randomIndex){
     double bail_amt = -3000;
     printf("%s. Pay Rs%.2f to get bail \n\n",action[i],fabs(bail_amt));
     money = transaction(selected_player,money,bail_amt);
-    printf("-------------------------------------------------------\n");
-    printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    printf("-------------------------------------------------------\n\n");
-    sleep(2);
+    // printf("-------------------------------------------------------\n");
+    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
+    // printf("-------------------------------------------------------\n\n");
+    // sleep(2);
 }
 
 //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start

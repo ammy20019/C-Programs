@@ -27,11 +27,42 @@ char** nick_name = NULL;
 char* selected_player;
 char* selected_personality;
 char* selected_speciality;
-double money = 10000.00;
+double money=20000; //initial amount
 char* player_name;
 
 int char_row = 0;
 int char_trav = 0;
+
+double get_asset_from_file(const char* targetPlayer) {
+    FILE *file;
+    char line[200];
+    char playerName[100], character[100];
+    double assets = 0.0; 
+    double total_amt_from_file = 0.0;
+    file = fopen("player_details.csv", "r");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return -1;  
+    }
+    // Skip the first line if it contains headers (optional)
+    fgets(line, sizeof(line), file);
+
+    // Read through the file line by line
+    while (fgets(line, sizeof(line), file)) {
+        // Parse each line
+        if (sscanf(line, "%99[^,],%99[^,],%lf", playerName, character, &assets) == 3) {
+            if (strcmp(playerName, targetPlayer) == 0) {
+                printf("Checking current assets status: %.2f\n", assets);
+                total_amt_from_file = assets; 
+                break;  // Exit the loop once the player is found
+            }
+        }
+    }
+
+    fclose(file);  
+    //printf("Total amount from file is %.2f\n", total_amt_from_file);
+    return total_amt_from_file;
+}
 
 double transaction(const char* targetPlayer, double total_amt, double transaction_amt){
     if ((total_amt + transaction_amt < 0) ){
@@ -43,28 +74,15 @@ double transaction(const char* targetPlayer, double total_amt, double transactio
         printf("Cheque bounced, pay a fine of Rs %.2f to Bank \n", random_amt);
         make_negative_double(&random_amt);
         return transaction(targetPlayer,total_amt, random_amt);
-        //return total_amt;
     } else if(total_amt == 0){
         printf("You have gone bankrupt! Exiting game...! \n");
         exit(0);
     }
-    // FILE *file;
-    // char line[200];
-    // char playerName[100], character[100];
-    // double assets;
-    // file = fopen("player_details.csv", "r");
-    // fgets(line, sizeof(line), file);
-    // while (fgets(line, sizeof(line), file)) {
-    //     if (sscanf(line, "%99[^,],%99[^,],%lf", playerName, character, &assets) == 3) {
-    //         if (strcmp(playerName, targetPlayer) == 0) {
-    //             printf("Checking current assets status: %.2f\n", assets);
-    //             total_amt = assets;
-    //             break; 
-    //         }
-    //     }
-    // }
-    // fclose(file);
     total_amt += transaction_amt;
+    printf("-------------------------------------------------------\n");
+    printf(YELLOW "Your updated balance is : %.2f \n" RESET, total_amt);
+    printf("-------------------------------------------------------\n\n");
+    sleep(3);
     return total_amt;
 }
 
@@ -363,7 +381,7 @@ char** design() {
     snprintf(designs[7], 40, "  \\ o /\n"
                              "    Q  \n"
                              "   / \\ \n"
-                             "LUCKY DAY  ");
+                             "LIFE EVENT ");
 
     designs[8] = (char*) malloc(100 * sizeof(char));
     snprintf(designs[8], 100, "|---PRISON---|| \n"

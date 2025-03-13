@@ -1,11 +1,11 @@
 Tile_Type,Attributes
-Start,You landed on START received Rs 10000.00
-Property,You are at,
-Airport,You are at,
-Good Luck, Today is your lucky day,
+Start, You landed on START received Rs 10000.00
+Property, You are at,
+Airport, You are at,
+Life Event, An event occured in your life,
 Prison, You have been sent to Prison,
 Office, You are at,
 Property, You are at,
-Good Luck, Today is your lucky day,
-Airport,You are at,
+Life Event, An event occured in your life
+Airport, You are at,
 Office, You are at,
