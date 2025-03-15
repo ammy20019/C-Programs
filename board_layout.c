@@ -17,7 +17,11 @@
 
 double rent[8] = {250.0, 450.0, 400.0, 140.0, 620.0, 280.0, 300.0, 800.0};
 double interest_per[8] = {7.3, 3, 4, 6.2, 5, 6, 7, 8};
-int tenure[6] = {1,3,6,4,5,2};
+int tenure[8] = {1,3,6,4,5,2,10,8};
+char* owned_properties[10] = {NULL};
+int own_property_counter = 0;
+double own_properties_amt[10];
+double quoted_price[10];
 
 char** treasure = NULL;
 char** place = NULL;
@@ -25,19 +29,19 @@ char** house = NULL;
 char** income_tax = NULL;
 char** airport = NULL;
 char** company = NULL;
-double* t_amt;
-double* p_amt;
-double* h_amt;
-double* a_amt;
-double* c_amt;
+double* t_amt = NULL;
+double* p_amt = NULL;
+double* h_amt = NULL;
+double* a_amt = NULL;
+double* c_amt = NULL;
 
 int row = 0;
 int i_trav = 0;
 
 void getTilesAttr() {
-    FILE* fp = fopen("mix_data.csv", "r");
+    FILE* fp_tiles = fopen("mix_data.csv", "r");
 
-    if (!fp) {
+    if (!fp_tiles) {
         printf("Can't open file\n");
         return;
     } else {
@@ -55,7 +59,7 @@ void getTilesAttr() {
         c_amt = (double*)malloc(sizeof(double) * MAX_ROWS);
 
         char buffer[2042]; // buffer to store each line of the CSV
-        while (fgets(buffer, sizeof(buffer), fp)) {
+        while (fgets(buffer, sizeof(buffer), fp_tiles)) {
             row++;
             if (row == 1) {
                 continue; // Skip the header row
@@ -138,7 +142,7 @@ void getTilesAttr() {
             // Move to the next row
             i_trav++;  
         }
-        fclose(fp);
+        fclose(fp_tiles);
     }
 }
 
@@ -196,7 +200,9 @@ char** tile= NULL;
 char** action = NULL;
 int row_b = 0;
 int i_board = 0;
+pthread_mutex_t board_attr_mutex = PTHREAD_MUTEX_INITIALIZER;
 void *getBoardAttr(void *args) {
+    pthread_mutex_lock(&board_attr_mutex);
     FILE* fp = fopen("board.csv", "r");
 
     if (!fp) {
@@ -254,6 +260,7 @@ void *getBoardAttr(void *args) {
             i_board++;  
         }
         fclose(fp);
+        pthread_mutex_unlock(&board_attr_mutex);
     }
     return NULL;
 }
@@ -326,10 +333,11 @@ void* increase_amt(void* arg) {
     for (long long i = 0; i < intervals; i++) {
         sleep(seconds_interval);  // Sleep for the given interval before next increase
         double interest_amt = increase_amount(*amt, increase_percent);  // Increase the amount by the given percentage
-        printf(GREEN "Received interest amount of : Rs %.2f \n" RESET, interest_amt);
+        printf("\n💼 Current Balance: Rs %.2f 💻\n", money);
+        printf(GREEN " Interest Accrued: Rs %.2f 🌟\n" RESET, interest_amt);        
         //curr_bal = get_asset_from_file(selected_player);
-        printf("Current Balance %.2f \n", money);
-        //transaction(selected_player,money,*amt);
+        
+        transaction(selected_player,money,interest_amt);
         *amt += interest_amt;
     }
     return NULL;
@@ -339,7 +347,8 @@ pthread_t interest_amt_thread;
 thread_data_interest data;
 
 int get_interest_amt(double amount, double increase_percent,int tenure ){
-    printf("You will receive an interest of %.2f percent on your asset per month for %d months \n Interest Amount will be credited to your account every month till the tenure\n\n", increase_percent, tenure);
+    printf("📈 You will earn %.2f%% interest on your asset for %d months\n", increase_percent, tenure);
+    printf("🧭 Interest will be credited to your account every month until the tenure.\n");
     int seconds_interval = 30;  // 30 seconds interval, which is 1 month in this game
     data.amt = amount;
     data.increase_percent = increase_percent;
@@ -353,31 +362,52 @@ int get_interest_amt(double amount, double increase_percent,int tenure ){
     return 0;
 }
 
+int bought_property(double amt, char* property){
+    if ((amt == 0) || (strcmp(property, "Real Estate") == 0)){
+        printf("Listing your all properties here \n");
+        for(int i=0;i<own_property_counter;i++){
+            quoted_price[i] = own_properties_amt[i] * 0.3;
+            printf(YELLOW "[🏠] Owned Property: %s | Purchased Amount: Rs %.2f | Quoted Price of Agent Rs %.2f 💰\n" RESET, owned_properties[i], own_properties_amt[i], quoted_price[i]);
+        }
+    } else{
+        owned_properties[own_property_counter] = property;
+        own_properties_amt[own_property_counter] = amt;
+        own_property_counter++;
+    }
+    return 0;
+}
+
 void make_negative_double(double *num) {
     if (*num > 0) {
         *num = -(*num);  // Multiply the number by -1 to make it negative
     }
 }
-
+void make_positive_double(double *num) {
+    if (*num < 0) {
+        *num = -(*num);  // Multiply the number by -1 to make it positive
+    }
+}
 void attrProperty(int i,int randomIndex){
+    int r_index = rand() % 8; //8 here because rent/tenure/interest are having 8 ele each
     strcat(action[i], " ");
     strcat(action[i],house[randomIndex]);
     printf("%s \n\n",action[i]);
     //will define the sequence once the player lands in property
     char ch;
-    printf("Do you want to buy this property for Rs%.2f or want to pay rent of Rs%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),fabs(rent[randomIndex]));
+    printf("Do you want to buy this property for Rs%.2f or pay rent of Rs%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),fabs(rent[r_index]));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
         //flow for interest on the property
-        get_interest_amt(h_amt[randomIndex], interest_per[randomIndex], tenure[randomIndex]);
-
+        get_interest_amt(h_amt[randomIndex], interest_per[r_index], tenure[r_index]);
+        bought_property(h_amt[randomIndex], house[randomIndex]); //purchased property history
         make_negative_double(&h_amt[randomIndex]);
         money = transaction(selected_player,money,h_amt[randomIndex]);
+        //make_positive_double(&h_amt[randomIndex]);
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the rent for the stay. Proceeding...\n");
-        make_negative_double(&rent[randomIndex]);
-        money = transaction(selected_player,money,rent[randomIndex]);
+        make_negative_double(&rent[r_index]);
+        money = transaction(selected_player,money,rent[r_index]);
     } else {
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
@@ -394,23 +424,23 @@ void attrLuck(int i,int randomIndex){
     printf("%s \n\n",action[i]);
     //defining flow for the luck attribute
     money = transaction(selected_player,money,t_amt[randomIndex]);
-    // printf("-------------------------------------------------------\n");
-    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    // printf("-------------------------------------------------------\n\n");
-    // sleep(2);
 }
 
 void attrAirport(int i,int randomIndex){
+    int r_index = rand() % 8;
     strcat(action[i], " ");
     strcat(action[i],airport[randomIndex]);
     printf("%s \n\n",action[i]);
     //defining flow for airport
     char ch;
     double fee = -100.00;
-    printf("Do you want to buy this Airport for Rs%.2f or want to pay parking fee of Rs%.2f ? (B/R) : ",fabs(a_amt[randomIndex]),fabs(fee));
+    printf("Do you want to buy this Airport for Rs%.2f or parking fee of Rs%.2f ? (B/R) : ",fabs(a_amt[randomIndex]),fabs(fee));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
+        //flow for interest on the property
+        get_interest_amt(a_amt[randomIndex], interest_per[r_index], tenure[r_index]);
+        bought_property(a_amt[randomIndex], airport[randomIndex]); //purchased property history
         make_negative_double(&a_amt[randomIndex]);
         money = transaction(selected_player,money,a_amt[randomIndex]);
     } else if (ch == 'R' || ch == 'r') {
@@ -420,50 +450,51 @@ void attrAirport(int i,int randomIndex){
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrAirport(i,randomIndex);
     }
-    // printf("-------------------------------------------------------\n");
-    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    // printf("-------------------------------------------------------\n\n");
-    // sleep(2);
 }
 
 void attrOffice(int i,int randomIndex){
+    int r_index = rand() % 8;
     strcat(action[i], " ");
     strcat(action[i], company[randomIndex]);
     strcat(action[i], " Office");
     printf("%s \n\n",action[i]);
     //flow for buying office
     char ch;
-    printf("Do you want to buy this Company for Rs%.2f or want to pay visiting fee of Rs%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),fabs(rent[randomIndex]));
+    printf("Do you want to buy this Company for Rs%.2f or visiting fee of Rs%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),fabs(rent[r_index]));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this Office. Proceeding...\n");
+        //flow for interest on the property
+        get_interest_amt(c_amt[randomIndex], interest_per[r_index], tenure[r_index]);
+        bought_property(c_amt[randomIndex], company[randomIndex]); //purchased property history
         make_negative_double(&c_amt[randomIndex]);
         money = transaction(selected_player,money,c_amt[randomIndex]);
+        make_positive_double(&c_amt[randomIndex]);
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the visiting fee in the Office. Proceeding...\n");
-        make_negative_double(&rent[randomIndex]);
-        money = transaction(selected_player,money,fabs(rent[randomIndex]));
+        make_negative_double(&rent[r_index]);
+        money = transaction(selected_player,money,fabs(rent[r_index]));
     } else {
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
     }
-    // printf("-------------------------------------------------------\n");
-    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    // printf("-------------------------------------------------------\n\n");
-    // sleep(2);
+    sleep(4);
 }
 
-void attrPrison(int i,int randomIndex){
+void attrPrison(int i){
+    int r_index = rand() % 8;
     double bail_amt = -3000;
     printf("%s. Pay Rs%.2f to get bail \n\n",action[i],fabs(bail_amt));
     money = transaction(selected_player,money,bail_amt);
-    // printf("-------------------------------------------------------\n");
-    // printf(YELLOW "Your updated balance is : %.2f \n" RESET, money);
-    // printf("-------------------------------------------------------\n\n");
-    // sleep(2);
 }
 
-//0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: lucky day, 8: prison, 9: start
+void attrRealEstate(int i){
+    int r_index = rand() % 8;
+    printf("%s \n\n",action[i]);
+    //flow for buying properties, here will give user option to sell properties
+    bought_property(0,"Real Estate");
+}
+//0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: life event, 8: prison, 9: start, 10: Real Estate Agent
 void *displayBoard(void *args) {
     //getTilesAttr();
     char **designs = design();
@@ -472,7 +503,7 @@ void *displayBoard(void *args) {
         exit(1);  // Exit if there was an error in memory allocation
     }
     //int arr_size = sizeof(treasure) / sizeof(treasure[0]);
-    int arr_size = 4;
+    int arr_size = 30; //for 4 data rows in excel
     int randomIndex;
     //printf("Array size %d \n", arr_size);
     srand(time(NULL));
@@ -488,24 +519,27 @@ void *displayBoard(void *args) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[3]);
             attrAirport(i,randomIndex);
-        } else if (strstr(tile[i], "Luck") != NULL) {
+        } else if (strstr(tile[i], "Life Event") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[7]);
             attrLuck(i,randomIndex);
         } else if (strstr(tile[i], "Prison") != NULL) {
-            randomIndex = rand() % arr_size;
             printf("%s", designs[8]);
-            attrPrison(i,randomIndex);
+            attrPrison(i);
         } else if (strstr(tile[i], "Office") != NULL) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[6]);
             attrOffice(i,randomIndex);
-        } 
+        } else if(strstr(tile[i], "Estate") != NULL) {
+            printf("%s", designs[10]);
+            attrRealEstate(i);
+        }
+        sleep(3);
         //printf("\n");
     }
     char money_str[20];
     sprintf(money_str, "%.2f", money);  //cconvert int to str first
-    printf("===Fetched player name is %s \n", player_name);
+    //printf("===Fetched player name is %s \n", player_name);
     update_file_player_details(player_name,money_str,"Assets");
     return NULL;
 }

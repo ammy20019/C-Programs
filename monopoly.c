@@ -118,6 +118,7 @@ void freeTilesArr(char** strings, int size) {
 
 int main() {
     int choice;
+    struct sched_param param;
     char** strings = createTilesArr(BOARD_SIZE);
     Board_HashTable* ht = createTable();
     if (strings == NULL) {
@@ -134,8 +135,12 @@ int main() {
     //test area
     //update_file_player_details("Jojo Kim","4300","Assets");
     //exit(0);
+    //sleep(10);
+    printf("==== Loading Game Please wait! \n");
     pthread_t thread[6]; 
     pthread_create(&thread[1], NULL, get_Character_Details, NULL);
+    param.sched_priority = 4;
+    pthread_setschedparam(thread[1], SCHED_FIFO, &param);
     pthread_create(&thread[2], NULL, getBoardAttr, NULL);
     pthread_join(thread[1], NULL);
     pthread_join(thread[2], NULL);

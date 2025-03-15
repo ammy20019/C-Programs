@@ -8,7 +8,7 @@
 #include <time.h>
 #include <math.h>
 #include "board_layout.h"
-#define MAX_ROWS 100
+#define MAX_ROWS 500
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"
@@ -24,11 +24,12 @@ char** sp_ability = NULL;
 char** backstory = NULL;
 char** personality = NULL;
 char** nick_name = NULL;
-char* selected_player;
-char* selected_personality;
-char* selected_speciality;
+char* selected_player = NULL;
+char* selected_personality = NULL;
+char* selected_speciality = NULL;
 double money=20000; //initial amount
-char* player_name;
+char* player_name = NULL;
+char name1[250], name2[250], full_name[500];
 
 int char_row = 0;
 int char_trav = 0;
@@ -64,7 +65,9 @@ double get_asset_from_file(const char* targetPlayer) {
     return total_amt_from_file;
 }
 
+pthread_mutex_t counter_mutex;
 double transaction(const char* targetPlayer, double total_amt, double transaction_amt){
+    pthread_mutex_lock(&counter_mutex);
     if ((total_amt + transaction_amt < 0) ){
         double lower_amt_margin = total_amt / 2.5;
         double max_amt_margin = total_amt / 4.8;
@@ -82,14 +85,17 @@ double transaction(const char* targetPlayer, double total_amt, double transactio
     printf("-------------------------------------------------------\n");
     printf(YELLOW "Your updated balance is : %.2f \n" RESET, total_amt);
     printf("-------------------------------------------------------\n\n");
-    sleep(3);
+    pthread_mutex_unlock(&counter_mutex);
+    money = total_amt;
     return total_amt;
 }
 
+pthread_mutex_t get_character_mutex = PTHREAD_MUTEX_INITIALIZER;
 void *get_Character_Details(void *args) {
-    FILE* fp = fopen("characters.csv", "r");
+    pthread_mutex_lock(&get_character_mutex);
+    FILE* fp_character = fopen("characters.csv", "r");
 
-    if (!fp) {
+    if (!fp_character) {
         printf("Can't open file\n");
         exit(0);
         return NULL;
@@ -102,8 +108,8 @@ void *get_Character_Details(void *args) {
         personality = (char**)malloc(sizeof(char*) * MAX_ROWS); 
         nick_name = (char**)malloc(sizeof(char*) * MAX_ROWS); 
 
-        char buffer[1024]; // buffer to store each line of the CSV
-        while (fgets(buffer, sizeof(buffer), fp)) {
+        char buffer[3072]; // buffer to store each line of the CSV
+        while (fgets(buffer, sizeof(buffer), fp_character)) {
             char_row++;
             if (char_row == 1) {
                 continue; // Skip the header row
@@ -134,7 +140,6 @@ void *get_Character_Details(void *args) {
                     }
                     strcpy(character[char_trav], value);
                 } else if (column == 1) {
-                    char name1[250], name2[250], full_name[500];
                     name[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     nick_name[char_trav] = (char*)malloc((strlen(value) + 1) * sizeof(char));
                     if (name[char_trav] == NULL) {
@@ -177,7 +182,8 @@ void *get_Character_Details(void *args) {
             }
             char_trav++;   //next row
         }
-        fclose(fp);
+        fclose(fp_character);
+        pthread_mutex_unlock(&get_character_mutex);
     }
     return NULL;
 }
@@ -220,7 +226,14 @@ void *display_Character_Details(void *args) {
 void Confirmed_character(char* nickname,char* personality,char* speciality){
     char ch;
     system("clear");
-    printf(YELLOW "[_] Hey %s, Welcome to Switzerland! \n\n[_] I'm Mia, I will be assisting towards your journey in Switzerland \n\n[_] You have Rs %.2f with you in cash\n\n[_] Surviving and living your life the fullest is your goal\n\n[_] Each decision you make will either make you a millionare or bankrupt\n\n" RESET, nickname, money);
+    printf(YELLOW "[💼] Welcome %s, to Switzerland's Digital Realm! 🌍\n\n", nickname);
+    printf("[🤖] I’m Mia, here to guide you on your path to fortune 🛤️\n\n");
+    printf("[💰] Your current balance is Rs %.2f 💸. Make sure to use it wisely 🏦\n\n", money);
+    printf("[⚡] Your mission: Make decisions that will either make you rich or send you into debt 💳\n\n");
+    printf("[🏠] Buy assets, earn profits, and watch your wealth grow with interest 💎\n\n");
+    printf("[⏳] In this world, every 30 seconds equals one full month of growth 🌿\n\n");
+    printf("[💡] Interest is earned on both your assets and their profits 💰\n\n");
+    printf("[🎯] Best of luck in your journey ahead! 🌠\n\n" RESET);
     selected_player = nickname;
     selected_personality = personality;
     selected_speciality = speciality;
@@ -326,10 +339,10 @@ void free_Character_Details() {
     personality = NULL;
     nick_name = NULL;
 }
-char **designs ;
+char **designs = NULL;
 char** design() {
     // Dynamically allocate memory for the array of char pointers
-    designs = (char**) malloc(9 * sizeof(char*)); //hardcode 9 element
+    designs = (char**) malloc(11 * sizeof(char*)); //hardcode 10 element
     if (!designs) {
         printf("Memory allocation failed for designs array!\n");
         return NULL;
@@ -393,7 +406,14 @@ char** design() {
     snprintf(designs[9], 100, " ____n____\n"
                               "|         | \n"
                               "|__START__|");
-
+    designs[10] = (char*) malloc(200 * sizeof(char));
+    snprintf(designs[10], 200, "      ________ \n"
+                               "     |        | \n"
+                               "     |  HOUSE | \n"
+                               "     |  FOR   | \n"
+                               "     |  SALE  | \n"
+                               "     |________| \n"
+                               " Best deals in town! ");
     return designs;
 }
 
