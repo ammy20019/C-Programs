@@ -21,6 +21,7 @@ void displayTiles();
 void freeTilesMemory();
 void *getBoardAttr(void *args);
 void attrProperty(int i,int randomIndex);
+void sell_property(double amt, char* property, int index, double sell_price);
 int bought_property(double amt, char* property);
 void attrOffice(int i,int randomIndex);
 void attrAirport(int i,int randomIndex);

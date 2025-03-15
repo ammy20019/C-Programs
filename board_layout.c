@@ -358,16 +358,43 @@ int get_interest_amt(double amount, double increase_percent,int tenure ){
     pthread_create(&interest_amt_thread, NULL, increase_amt, (void*)&data);
 
     // // Wait for the thread to finish execution
-    // pthread_join(interest_amt_thread, NULL);
+    // pthread_join(interest_amt_thread, NULL); called in main function monopoly.c
     return 0;
+}
+
+void sell_property(double amt, char* property, int index, double sell_price){
+    printf("Successfully Sold: %s for %.2f \n ", property, sell_price);
+    transaction(selected_player,money,sell_price);
+    for (int i = index; i < own_property_counter - 1; i++) {
+        own_properties_amt[i] = own_properties_amt[i + 1];
+        owned_properties[i] = owned_properties[i+1];
+    }
+    own_property_counter--;
 }
 
 int bought_property(double amt, char* property){
     if ((amt == 0) || (strcmp(property, "Real Estate") == 0)){
         printf("Listing your all properties here \n");
         for(int i=0;i<own_property_counter;i++){
-            quoted_price[i] = own_properties_amt[i] * 0.3;
-            printf(YELLOW "[🏠] Owned Property: %s | Purchased Amount: Rs %.2f | Quoted Price of Agent Rs %.2f 💰\n" RESET, owned_properties[i], own_properties_amt[i], quoted_price[i]);
+            double max_amt = own_properties_amt[i] * 1.6; // Calculate the upper bound (60% more than the property amount)
+            double random_factor = ((double)rand() / RAND_MAX) * (max_amt - own_properties_amt[i]); // A value between 0 and (max_amt - amt) -> Generate a random number to decide whether to increase or decrease
+            if (rand() % 2 == 0) { // Randomly decide to increase or decrease the value
+                quoted_price[i] = own_properties_amt[i] + random_factor;
+            } else {
+                quoted_price[i] =  own_properties_amt[i] - random_factor;
+            }
+            printf(YELLOW "%d-[🏠] Owned: %s | Purchased Amt: Rs %.2f | Quoted Price: Rs %.2f 💰\n" RESET, i+1, owned_properties[i], own_properties_amt[i], quoted_price[i]);
+        }
+        if (own_property_counter > 0){
+            printf(GREEN " DO YOU WISH TO SELL YOUR PROPERTY? (Enter the corresponding number to sell) or Enter '0' to skip \n" RESET);
+            int choice;
+            scanf("%d", &choice);
+            if (choice == 0){
+                ;
+            } else{
+                int s = choice - 1;
+                sell_property(own_properties_amt[s],owned_properties[s],s,quoted_price[s]);
+            }
         }
     } else{
         owned_properties[own_property_counter] = property;
@@ -398,16 +425,18 @@ void attrProperty(int i,int randomIndex){
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
-        //flow for interest on the property
-        get_interest_amt(h_amt[randomIndex], interest_per[r_index], tenure[r_index]);
-        bought_property(h_amt[randomIndex], house[randomIndex]); //purchased property history
         make_negative_double(&h_amt[randomIndex]);
-        money = transaction(selected_player,money,h_amt[randomIndex]);
-        //make_positive_double(&h_amt[randomIndex]);
+        double before_buying = money; // suppose 10rs and bought property for 1rs, remainig = 9rs in acct -> logic 10 - property = acct bal
+        transaction(selected_player,money,h_amt[randomIndex]);
+        make_positive_double(&h_amt[randomIndex]);
+        if (before_buying - h_amt[randomIndex] == money){
+            get_interest_amt(h_amt[randomIndex], interest_per[r_index], tenure[r_index]);
+            bought_property(h_amt[randomIndex], house[randomIndex]); //purchased property history
+        }
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the rent for the stay. Proceeding...\n");
         make_negative_double(&rent[r_index]);
-        money = transaction(selected_player,money,rent[r_index]);
+        transaction(selected_player,money,rent[r_index]);
     } else {
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
@@ -438,11 +467,16 @@ void attrAirport(int i,int randomIndex){
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
-        //flow for interest on the property
-        get_interest_amt(a_amt[randomIndex], interest_per[r_index], tenure[r_index]);
-        bought_property(a_amt[randomIndex], airport[randomIndex]); //purchased property history
+        //bought_property(a_amt[randomIndex], airport[randomIndex]); //purchased property history
         make_negative_double(&a_amt[randomIndex]);
-        money = transaction(selected_player,money,a_amt[randomIndex]);
+        double before_buying = money;
+        transaction(selected_player,money,a_amt[randomIndex]);
+        make_positive_double(&a_amt[randomIndex]);
+        if (before_buying - a_amt[randomIndex] == money){
+            //flow for interest on the property
+            get_interest_amt(a_amt[randomIndex], interest_per[r_index], tenure[r_index]);
+            bought_property(a_amt[randomIndex], airport[randomIndex]); //purchased property history
+        }
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the rent for parking. Proceeding...\n");
         money = transaction(selected_player,money,fee);
@@ -464,12 +498,16 @@ void attrOffice(int i,int randomIndex){
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this Office. Proceeding...\n");
-        //flow for interest on the property
-        get_interest_amt(c_amt[randomIndex], interest_per[r_index], tenure[r_index]);
-        bought_property(c_amt[randomIndex], company[randomIndex]); //purchased property history
+        //bought_property(c_amt[randomIndex], company[randomIndex]); //purchased property history
         make_negative_double(&c_amt[randomIndex]);
-        money = transaction(selected_player,money,c_amt[randomIndex]);
+        double before_buying = money;
+        transaction(selected_player,money,c_amt[randomIndex]);
         make_positive_double(&c_amt[randomIndex]);
+        if (before_buying - c_amt[randomIndex] == money){
+            //flow for interest on the property
+            get_interest_amt(c_amt[randomIndex], interest_per[r_index], tenure[r_index]);
+            bought_property(c_amt[randomIndex], company[randomIndex]); 
+        }
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the visiting fee in the Office. Proceeding...\n");
         make_negative_double(&rent[r_index]);
