@@ -348,7 +348,7 @@ thread_data_interest data;
 
 int get_interest_amt(double amount, double increase_percent,int tenure ){
     printf("📈 You will earn %.2f%% interest on your asset for %d months\n", increase_percent, tenure);
-    printf("🧭 Interest will be credited to your account every month until the tenure.\n");
+    printf("🧭 Interest will be credited to your account every month until the tenure.\n\n");
     int seconds_interval = 30;  // 30 seconds interval, which is 1 month in this game
     data.amt = amount;
     data.increase_percent = increase_percent;
@@ -370,6 +370,15 @@ void sell_property(double amt, char* property, int index, double sell_price){
         owned_properties[i] = owned_properties[i+1];
     }
     own_property_counter--;
+    char ch;
+    printf("DO YOU WISH TO SELL MORE? (Y/N)\n");
+    scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
+    if (ch == 'Y' || ch == 'y') {
+        bought_property(0,"Real Estate");
+    }
+    else{
+        ;
+    }
 }
 
 int bought_property(double amt, char* property){
@@ -511,7 +520,7 @@ void attrOffice(int i,int randomIndex){
     } else if (ch == 'R' || ch == 'r') {
         printf("You chose to pay the visiting fee in the Office. Proceeding...\n");
         make_negative_double(&rent[r_index]);
-        money = transaction(selected_player,money,fabs(rent[r_index]));
+        money = transaction(selected_player,money,rent[r_index]);
     } else {
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
