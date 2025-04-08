@@ -12,6 +12,8 @@
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"
 #define YELLOW  "\033[33m"
+#define CYAN  "\033[36m"     
+#define ORANGE "\033[48;5;214m"
 #define MAX_ROWS 100
 #define MAX_LINE_LENGTH 1024
 
@@ -22,6 +24,16 @@ char* owned_properties[10] = {NULL};
 int own_property_counter = 0;
 double own_properties_amt[10];
 double quoted_price[10];
+double travel_cost = 280;
+char *vehicle_names[] = {
+    "🏍️ YAMAHA LRX200 *         ",
+    "🚗 HYUNDAI i40M **     ",
+    "🚙 PORSCHE MACAN ***   ",
+    "🚘 LAMBORGHINI URUS SE~",
+    "🏎️ FERRARI SF90 STRADLE~~  "
+};
+double price[] = {36000.00, 132000.20, 205000.50, 450000.00, 760000.10};
+int fuel[] = {30, 140, 180, 200, 250};
 
 char** treasure = NULL;
 char** place = NULL;
@@ -409,6 +421,7 @@ int bought_property(double amt, char* property){
         owned_properties[own_property_counter] = property;
         own_properties_amt[own_property_counter] = amt;
         own_property_counter++;
+        get_watch_quest(own_property_counter);
     }
     return 0;
 }
@@ -525,7 +538,7 @@ void attrOffice(int i,int randomIndex){
         printf("Invalid input. Please enter 'B' or 'R'.\n");
         attrProperty(i,randomIndex);
     }
-    sleep(4);
+    sleep(2);
 }
 
 void attrPrison(int i){
@@ -541,6 +554,37 @@ void attrRealEstate(int i){
     //flow for buying properties, here will give user option to sell properties
     bought_property(0,"Real Estate");
 }
+
+void attrAutomobile(int i){
+    printf("%s \n\n",action[i]);
+    printf(YELLOW "         []               MARCO AUTOMOBILES             [] \n");
+    printf( "  |        VEHICLE             |  On-Road PRICE  | Cost Per Move \n" RESET);
+    printf("  | -------------------------  - --------------  - ------------- |\n");
+
+    for (int i = 0; i < 5; i++) {
+        printf(CYAN "%d | %-28s | %14.2f | %14d |\n" RESET, i+1, vehicle_names[i], price[i], fuel[i]);
+        printf("  - -------------------------  - ---------------- - --------------\n");
+    }
+    printf("WHICH VEHICLE WOULD YOU LIKE TO PURCHASE? (Enter No. corresponding to vehicle) or Enter '0' to skip \n");
+    int ch;
+    scanf("%d", &ch);
+    if (ch == 0){
+        ;
+    } else{
+        int s = ch - 1;
+        bought_property(price[s],vehicle_names[s]);
+        make_negative_double(&price[s]);
+        transaction(selected_player,money,price[s]);
+        make_positive_double(&price[s]);
+        //sell_property(own_properties_amt[s],owned_properties[s],s,quoted_price[s]);
+    }
+}
+
+int attrVacation(int i){
+    int response = seashore_intro();
+    return response; //0 or 1, 1 for no, 0 for yes
+}
+
 //0: house, 1: car, 2: person, 3: plane, 4: hotel, 5: cruise, 6: office, 7: life event, 8: prison, 9: start, 10: Real Estate Agent
 void *displayBoard(void *args) {
     //getTilesAttr();
@@ -550,7 +594,7 @@ void *displayBoard(void *args) {
         exit(1);  // Exit if there was an error in memory allocation
     }
     //int arr_size = sizeof(treasure) / sizeof(treasure[0]);
-    int arr_size = 30; //for 4 data rows in excel
+    int arr_size = 29; //for 29 data rows in excel
     int randomIndex;
     //printf("Array size %d \n", arr_size);
     srand(time(NULL));
@@ -577,11 +621,35 @@ void *displayBoard(void *args) {
             randomIndex = rand() % arr_size;
             printf("%s", designs[6]);
             attrOffice(i,randomIndex);
-        } else if(strstr(tile[i], "Estate") != NULL) {
+        } else if(strstr(tile[i], "Dealership") != NULL) {
             printf("%s", designs[10]);
             attrRealEstate(i);
+        } else if(strstr(tile[i], "Automobile") != NULL) {
+            //printf("%s", designs[10]);
+            attrAutomobile(i);
+        } else if(strstr(tile[i], "Vacation") != NULL) {
+            printf("%s", designs[5]);
+            int go = attrVacation(i);
+            if (go==1){
+                i = 1;
+            }
         }
-        sleep(3);
+        double travel_cost_r;
+        if (own_property_counter>0){
+            for (int i = 0; i < own_property_counter; i++) {
+                if (strstr(owned_properties[i], "***")) { travel_cost_r = fuel[2]; }
+                else if (strstr(owned_properties[i], "**")) { travel_cost_r = fuel[1]; }
+                else if (strstr(owned_properties[i], "*")) { travel_cost_r = fuel[0]; }
+                else if (strstr(owned_properties[i], "~~")) { travel_cost_r = fuel[4]; }
+                else if (strstr(owned_properties[i], "~")) { travel_cost_r = fuel[3]; }
+            }
+        } else{
+            travel_cost_r = travel_cost;
+        }
+        printf("Spent Rs %.2f on travelling \n",fabs(travel_cost_r));
+        make_negative_double(&travel_cost_r);
+        transaction(selected_player,money,travel_cost_r);
+        sleep(2);
         //printf("\n");
     }
     char money_str[20];

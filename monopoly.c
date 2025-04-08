@@ -16,6 +16,7 @@
 #define MAX_ROWS 100
 #define MAX_STRING_LENGTH 100
 
+pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 typedef struct Node {
     int key;
     char* value;
@@ -114,7 +115,38 @@ void freeTilesArr(char** strings, int size) {
     free(strings);  // Free the array of string pointers
 }
 
-
+void get_current_datetime(char *datetime_str) {
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    strftime(datetime_str, 20, "%Y-%m-%d_%H-%M-%S", t);  // Format: YYYY-MM-DD_HH-MM-SS
+}
+FILE *log_file = NULL;
+void *capture_output(void *arg) {
+        // Get the current datetime string for the log filename
+        char log_filename[256];
+        get_current_datetime(log_filename);
+    
+        // Append ".txt" to the filename
+        strcat(log_filename, ".txt");
+    
+        // Open the log file in append mode
+        log_file = fopen(log_filename, "a");
+        if (log_file == NULL) {
+            perror("Error opening log file");
+            pthread_exit(NULL);
+        }
+    
+        // Lock the mutex to ensure thread-safe writes to the log file
+        pthread_mutex_lock(&log_mutex);
+    
+        // Print the initial log message
+        fprintf(log_file, "Logging started...\n");
+        fflush(log_file); // Ensure immediate writing to the log file
+    
+        pthread_mutex_unlock(&log_mutex);
+    
+        return NULL;
+}
 
 int main() {
     int choice;
@@ -131,15 +163,22 @@ int main() {
     if (ht == NULL) {
         return 1;  
     }
+    pthread_t capture_thread;
 
+    // Create a separate thread to capture output
+    if (pthread_create(&capture_thread, NULL, capture_output, NULL) != 0) {
+        perror("Failed to create thread");
+        return 1;
+    }
     //test area
     //update_file_player_details("Jojo Kim","4300","Assets");
     //exit(0);
     //sleep(10);
+    
     printf("==== Loading Game Please wait! \n");
     pthread_t thread[6]; 
     pthread_create(&thread[1], NULL, get_Character_Details, NULL);
-    param.sched_priority = 4;
+    param.sched_priority = 7;
     pthread_setschedparam(thread[1], SCHED_FIFO, &param);
     pthread_create(&thread[2], NULL, getBoardAttr, NULL);
     pthread_join(thread[1], NULL);
@@ -148,6 +187,12 @@ int main() {
     pthread_join(thread[3], NULL);
     printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
     scanf("%d", &choice);
+    //below two lines for testing
+    pthread_join(capture_thread, NULL);
+    if (log_file != NULL) {
+        fclose(log_file);
+    }
+    exit(0);
     player_setup(choice);
     register_player();
     getTilesAttr();
@@ -163,6 +208,8 @@ int main() {
     //displayTiles();
     freeTilesMemory();
     free_Character_Details();
+    pthread_join(capture_thread, NULL);
+    fclose(log_file);
 }
 
 //cmd to execute script: gcc monopoly.c character.c bord_layout.c -o monopoly && ./monopoly

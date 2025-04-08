@@ -27,7 +27,7 @@ char** nick_name = NULL;
 char* selected_player = NULL;
 char* selected_personality = NULL;
 char* selected_speciality = NULL;
-double money=20000; //initial amount
+double money=200000; //initial amount
 char* player_name = NULL;
 char name1[250], name2[250], full_name[500];
 
@@ -342,7 +342,7 @@ void free_Character_Details() {
 char **designs = NULL;
 char** design() {
     // Dynamically allocate memory for the array of char pointers
-    designs = (char**) malloc(11 * sizeof(char*)); //hardcode 10 element
+    designs = (char**) malloc(11 * sizeof(char*)); //hardcode 11 element
     if (!designs) {
         printf("Memory allocation failed for designs array!\n");
         return NULL;
