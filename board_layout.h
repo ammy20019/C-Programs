@@ -8,6 +8,7 @@ typedef struct {
     int tenure;             //time period in which interest 
 } thread_data_interest;
 
+extern pthread_t main_thread[50];
 extern pthread_t interest_amt_thread;
 extern double travel_cost;
 extern double rent[8];

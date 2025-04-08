@@ -1,38 +1,38 @@
 Treasure,Place,House,Income Tax,Airport,Company,T_amt,P_amt,H_amt,A_amt,C_amt
-Received inheritance from a distant relative of Rs 50000.00,Zurich,1BHK in Zurich,0,Zurich Airport,Swiss Bank,50000.00,100000.00,75000.00,150000.00,50000.00
-Won a legal settlement for breach of contract of Rs 20000.00,Basel,Studio Apartment in Basel,10,EuroAirport Basel-Mulhouse-Freiburg,LegalCorp,20000.00,50000.00,30000.00,80000.00,25000.00
-Paid for car repairs due to accident of Rs 5000.00,Lucerne,2BHK in Lucerne,15,Lucerne Airport,AutoFix,-5000.00,15000.00,10000.00,30000.00,10000.00
-Received a government grant for environmental research of Rs 15000.00,Lausanne,3BHK in Lausanne,5,Lausanne Airport,GreenTech,15000.00,40000.00,25000.00,60000.00,15000.00
-Lost a business deal with a major client of Rs 80000.00,Geneva,Penthouse in Geneva,20,Geneva Airport,GlobalCorp,-80000.00,30000.00,5000.00,20000.00,10000.00
-Sold valuable artwork for profit of Rs 100000.00,Lugano,Luxury Villa in Lugano,5,Lugano Airport,ArtWorld,100000.00,200000.00,150000.00,250000.00,80000.00
-Gifted a charitable donation for cancer research of Rs 10000.00,Zurich,Detached House in Zurich,0,Zurich Airport,PhilanthropyOrg,-10000.00,50000.00,30000.00,75000.00,10000.00
-Had a tax refund from a previous year’s overpayment of Rs 3000.00,Zurich,Loft in Zurich,0,Zurich Airport,Hollywood Films,3000.00,10000.00,5000.00,15000.00,3000.00
-Invested in a promising tech startup of Rs 25000.00,Zurich,Condo in Zurich,10,Zurich Airport,TechPioneers,25000.00,75000.00,50000.00,120000.00,30000.00
-Compensation for wrongful dismissal of Rs 5000.00,Zurich,Apartment in Zurich,25,Zurich Airport,IndoCorp,-5000.00,20000.00,15000.00,40000.00,5000.00
-Received a prize from a business competition of Rs 25000.00,Bern,House in Bern,5,Bern Airport,StartUpX,25000.00,50000.00,30000.00,70000.00,25000.00
-Inherited a family estate from grandparents of Rs 200000.00,Zurich,Villa in Zurich,0,Zurich Airport,RealEstateGroup,200000.00,500000.00,300000.00,700000.00,200000.00
-Got a refund for overpaid tuition fees in university of Rs 3000.00,Zurich,Studio in Zurich,0,Zurich Airport,McGill University,3000.00,8000.00,4000.00,12000.00,3000.00
-Paid for unexpected medical expenses of Rs 5000.00,Basel,Flat in Basel,10,EuroAirport Basel-Mulhouse-Freiburg,HealthcareCo,-5000.00,12000.00,7000.00,18000.00,10000.00
-Awarded a grant for educational research in AI of Rs 15000.00,Lausanne,Apartment in Lausanne,5,Lausanne Airport,AI Innovations,15000.00,40000.00,25000.00,60000.00,15000.00
-Received royalties for a bestselling book of Rs 50000.00,Zurich,Duplex in Zurich,5,Zurich Airport,BookPublishers,50000.00,100000.00,75000.00,150000.00,50000.00
-Paid for property taxes after property valuation increase of Rs 10000.00,Zurich,Large House in Zurich,20,Zurich Airport,RealEstateFirm,-10000.00,40000.00,20000.00,70000.00,10000.00
-Got a refund for canceled vacation trip due to natural disaster of Rs 2000.00,Zurich,Modern Apartment in Zurich,0,Zurich Airport,TravelCo,2000.00,8000.00,5000.00,15000.00,2000.00
-Lost a lawsuit against a former partner of Rs 100000.00,Bern,Family Home in Bern,30,Bern Airport,LawFirm,-100000.00,30000.00,10000.00,25000.00,15000.00
-Received a settlement for personal injury in a car crash of Rs 40000.00,Zurich,Luxury Home in Zurich,15,Zurich Airport,InsuranceCo,40000.00,100000.00,60000.00,140000.00,40000.00
-Compensated for damage caused by natural disaster of Rs 15000.00,Lucerne,Chalet in Lucerne,5,Lucerne Airport,DisasterRelief,-15000.00,40000.00,20000.00,50000.00,10000.00
-Won a sports competition prize for charity donation of Rs 10000.00,Zurich,Apartment in Zurich,10,Zurich Airport,SportsClub,10000.00,50000.00,20000.00,60000.00,10000.00
-Received bonus for exceptional performance at work of Rs 10000.00,Basel,Cozy Home in Basel,20,EuroAirport Basel-Mulhouse-Freiburg,TechFirm,10000.00,25000.00,15000.00,45000.00,10000.00
-Awarded scholarship for further studies in a foreign country of Rs 15000.00,Lausanne,Studio in Lausanne,0,Lausanne Airport,University,15000.00,50000.00,25000.00,60000.00,15000.00
-Reimbursed for business travel expenses of Rs 3000.00,Zurich,Loft in Zurich,5,Zurich Airport,BusinessCorp,3000.00,10000.00,5000.00,12000.00,3000.00
-Got paid for a freelance web development project of Rs 5000.00,Zurich,Shared Apartment in Zurich,0,Zurich Airport,FreelancerCo,5000.00,15000.00,10000.00,25000.00,5000.00
-Received a government subsidy for renewable energy of Rs 20000.00,Zurich,House in Zurich,0,Zurich Airport,GreenEnergyCorp,20000.00,75000.00,40000.00,100000.00,20000.00
-Paid for flood damage to personal property of Rs 25000.00,Basel,House in Basel,10,EuroAirport Basel-Mulhouse-Freiburg,InsuranceCo,-25000.00,60000.00,30000.00,70000.00,25000.00
-Received a business loan for expansion of a small company of Rs 50000.00,Zurich,Villa in Zurich,15,Zurich Airport,TechStart,50000.00,100000.00,60000.00,150000.00,50000.00
-Got a windfall from a lucky investment in the stock market of Rs 100000.00,Zurich,Detached House in Zurich,5,Zurich Airport,StockInvest,100000.00,250000.00,150000.00,350000.00,100000.00
-Received an unexpected inheritance from a cousin of Rs 75000.00,Lugano,Apartment in Lugano,10,Lugano Airport,FamilyEstate,75000.00,120000.00,90000.00,200000.00,75000.00
-Received a bonus from a successful product launch of Rs 30000.00,Basel,Cozy Home in Basel,5,EuroAirport Basel-Mulhouse-Freiburg,ProductInc,30000.00,80000.00,50000.00,120000.00,30000.00
-Won a prize for exceptional customer service in the company of Rs 10000.00,Zurich,Studio Apartment in Zurich,0,Zurich Airport,CustomerCareCo,10000.00,25000.00,15000.00,40000.00,10000.00
-Paid for a luxury vacation to a tropical island of Rs 30000.00,Zurich,Beach House in Zurich,15,Zurich Airport,TravelLuxuryCo,-30000.00,80000.00,50000.00,120000.00,30000.00
-Lost money in a bad business venture of Rs 50000.00,Lucerne,Loft in Lucerne,10,Lucerne Airport,FailCorp,-50000.00,20000.00,15000.00,50000.00,20000.00
-Earned royalties for licensing a new music album of Rs 15000.00,Basel,Music Studio in Basel,5,EuroAirport Basel-Mulhouse-Freiburg,MusicCorp,15000.00,40000.00,25000.00,70000.00,15000.00
-Made a successful exit from a startup for Rs 200000.00,Zurich,Condo in Zurich,0,Zurich Airport,ExitTech,200000.00,400000.00,250000.00,600000.00,200000.00
+Received inheritance from a distant relative of $50000.00,Zurich,1BHK in Zurich,0,Zurich Airport,Swiss Bank,50000.00,100000.00,75000.00,150000.00,50000.00
+Won a legal settlement for breach of contract of $20000.00,Basel,Studio Apartment in Basel,10,EuroAirport Basel-Mulhouse-Freiburg,LegalCorp,20000.00,50000.00,30000.00,80000.00,25000.00
+Paid for car repairs due to accident of $5000.00,Lucerne,2BHK in Lucerne,15,Lucerne Airport,AutoFix,-5000.00,15000.00,10000.00,30000.00,10000.00
+Received a government grant for environmental research of $15000.00,Lausanne,3BHK in Lausanne,5,Lausanne Airport,GreenTech,15000.00,40000.00,25000.00,60000.00,15000.00
+Lost a business deal with a major client of $80000.00,Geneva,Penthouse in Geneva,20,Geneva Airport,GlobalCorp,-80000.00,30000.00,5000.00,20000.00,10000.00
+Sold valuable artwork for profit of $100000.00,Lugano,Luxury Villa in Lugano,5,Lugano Airport,ArtWorld,100000.00,200000.00,150000.00,250000.00,80000.00
+Gifted a charitable donation for cancer research of $10000.00,Zurich,Detached House in Zurich,0,Zurich Airport,PhilanthropyOrg,-10000.00,50000.00,30000.00,75000.00,10000.00
+Had a tax refund from a previous year’s overpayment of $3000.00,Zurich,Loft in Zurich,0,Zurich Airport,Hollywood Films,3000.00,10000.00,5000.00,15000.00,3000.00
+Invested in a promising tech startup of $25000.00,Zurich,Condo in Zurich,10,Zurich Airport,TechPioneers,25000.00,75000.00,50000.00,120000.00,30000.00
+Compensation for wrongful dismissal of $5000.00,Zurich,Apartment in Zurich,25,Zurich Airport,IndoCorp,-5000.00,20000.00,15000.00,40000.00,5000.00
+Received a prize from a business competition of $25000.00,Bern,House in Bern,5,Bern Airport,StartUpX,25000.00,50000.00,30000.00,70000.00,25000.00
+Inherited a family estate from grandparents of $200000.00,Zurich,Villa in Zurich,0,Zurich Airport,RealEstateGroup,200000.00,500000.00,300000.00,700000.00,200000.00
+Got a refund for overpaid tuition fees in university of $3000.00,Zurich,Studio in Zurich,0,Zurich Airport,McGill University,3000.00,8000.00,4000.00,12000.00,3000.00
+Paid for unexpected medical expenses of $5000.00,Basel,Flat in Basel,10,EuroAirport Basel-Mulhouse-Freiburg,HealthcareCo,-5000.00,12000.00,7000.00,18000.00,10000.00
+Awarded a grant for educational research in AI of $15000.00,Lausanne,Apartment in Lausanne,5,Lausanne Airport,AI Innovations,15000.00,40000.00,25000.00,60000.00,15000.00
+Received royalties for a bestselling book of $50000.00,Zurich,Duplex in Zurich,5,Zurich Airport,BookPublishers,50000.00,100000.00,75000.00,150000.00,50000.00
+Paid for property taxes after property valuation increase of $10000.00,Zurich,Large House in Zurich,20,Zurich Airport,RealEstateFirm,-10000.00,40000.00,20000.00,70000.00,10000.00
+Got a refund for canceled vacation trip due to natural disaster of $2000.00,Zurich,Modern Apartment in Zurich,0,Zurich Airport,TravelCo,2000.00,8000.00,5000.00,15000.00,2000.00
+Lost a lawsuit against a former partner of $100000.00,Bern,Family Home in Bern,30,Bern Airport,LawFirm,-100000.00,30000.00,10000.00,25000.00,15000.00
+Received a settlement for personal injury in a car crash of $40000.00,Zurich,Luxury Home in Zurich,15,Zurich Airport,InsuranceCo,40000.00,100000.00,60000.00,140000.00,40000.00
+Compensated for damage caused by natural disaster of $15000.00,Lucerne,Chalet in Lucerne,5,Lucerne Airport,DisasterRelief,-15000.00,40000.00,20000.00,50000.00,10000.00
+Won a sports competition prize for charity donation of $10000.00,Zurich,Apartment in Zurich,10,Zurich Airport,SportsClub,10000.00,50000.00,20000.00,60000.00,10000.00
+Received bonus for exceptional performance at work of $10000.00,Basel,Cozy Home in Basel,20,EuroAirport Basel-Mulhouse-Freiburg,TechFirm,10000.00,25000.00,15000.00,45000.00,10000.00
+Awarded scholarship for further studies in a foreign country of $15000.00,Lausanne,Studio in Lausanne,0,Lausanne Airport,University,15000.00,50000.00,25000.00,60000.00,15000.00
+Reimbursed for business travel expenses of $3000.00,Zurich,Loft in Zurich,5,Zurich Airport,BusinessCorp,3000.00,10000.00,5000.00,12000.00,3000.00
+Got paid for a freelance web development project of $5000.00,Zurich,Shared Apartment in Zurich,0,Zurich Airport,FreelancerCo,5000.00,15000.00,10000.00,25000.00,5000.00
+Received a government subsidy for renewable energy of $20000.00,Zurich,House in Zurich,0,Zurich Airport,GreenEnergyCorp,20000.00,75000.00,40000.00,100000.00,20000.00
+Paid for flood damage to personal property of $25000.00,Basel,House in Basel,10,EuroAirport Basel-Mulhouse-Freiburg,InsuranceCo,-25000.00,60000.00,30000.00,70000.00,25000.00
+Received a business loan for expansion of a small company of $50000.00,Zurich,Villa in Zurich,15,Zurich Airport,TechStart,50000.00,100000.00,60000.00,150000.00,50000.00
+Got a windfall from a lucky investment in the stock market of $100000.00,Zurich,Detached House in Zurich,5,Zurich Airport,StockInvest,100000.00,250000.00,150000.00,350000.00,100000.00
+Received an unexpected inheritance from a cousin of $75000.00,Lugano,Apartment in Lugano,10,Lugano Airport,FamilyEstate,75000.00,120000.00,90000.00,200000.00,75000.00
+Received a bonus from a successful product launch of $30000.00,Basel,Cozy Home in Basel,5,EuroAirport Basel-Mulhouse-Freiburg,ProductInc,30000.00,80000.00,50000.00,120000.00,30000.00
+Won a prize for exceptional customer service in the company of $10000.00,Zurich,Studio Apartment in Zurich,0,Zurich Airport,CustomerCareCo,10000.00,25000.00,15000.00,40000.00,10000.00
+Paid for a luxury vacation to a tropical island of $30000.00,Zurich,Beach House in Zurich,15,Zurich Airport,TravelLuxuryCo,-30000.00,80000.00,50000.00,120000.00,30000.00
+Lost money in a bad business venture of $50000.00,Lucerne,Loft in Lucerne,10,Lucerne Airport,FailCorp,-50000.00,20000.00,15000.00,50000.00,20000.00
+Earned royalties for licensing a new music album of $15000.00,Basel,Music Studio in Basel,5,EuroAirport Basel-Mulhouse-Freiburg,MusicCorp,15000.00,40000.00,25000.00,70000.00,15000.00
+Made a successful exit from a startup for $200000.00,Zurich,Condo in Zurich,0,Zurich Airport,ExitTech,200000.00,400000.00,250000.00,600000.00,200000.00

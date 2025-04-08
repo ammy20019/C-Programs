@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include "character.h"
 #include "board_layout.h"
+#include "audio.h"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -174,30 +175,37 @@ int main() {
     //update_file_player_details("Jojo Kim","4300","Assets");
     //exit(0);
     //sleep(10);
-    
+    system("osascript -e 'tell application \"Terminal\" to set the bounds of the front window to {0, 0, 1920, 1080}'");
+    system("clear");
     printf("==== Loading Game Please wait! \n");
-    pthread_t thread[6]; 
-    pthread_create(&thread[1], NULL, get_Character_Details, NULL);
+    //pthread_t main_thread[10]; //need to define as global so included in board_layout.h & it's c file
+    pthread_create(&main_thread[0], NULL, bg_music, NULL);
+
+    pthread_create(&main_thread[1], NULL, get_Character_Details, NULL);
     param.sched_priority = 7;
-    pthread_setschedparam(thread[1], SCHED_FIFO, &param);
-    pthread_create(&thread[2], NULL, getBoardAttr, NULL);
-    pthread_join(thread[1], NULL);
-    pthread_join(thread[2], NULL);
-    pthread_create(&thread[3], NULL, display_Character_Details, NULL);
-    pthread_join(thread[3], NULL);
+    pthread_setschedparam(main_thread[1], SCHED_FIFO, &param);
+    pthread_create(&main_thread[2], NULL, getBoardAttr, NULL);
+    pthread_join(main_thread[1], NULL);
+    pthread_join(main_thread[2], NULL);
+    pthread_create(&main_thread[3], NULL, display_Character_Details, NULL);
+    pthread_join(main_thread[3], NULL);
     printf(YELLOW "\n CHOOSE YOUR CHARACTER \n" RESET);
     scanf("%d", &choice);
+
     //below two lines for testing
-    pthread_join(capture_thread, NULL);
-    if (log_file != NULL) {
-        fclose(log_file);
-    }
-    exit(0);
+    // pthread_join(capture_thread, NULL);
+    // if (log_file != NULL) {
+    //     fclose(log_file);
+    // }
+    // exit(0);
+
     player_setup(choice);
     register_player();
     getTilesAttr();
-    pthread_create(&thread[4], NULL, displayBoard, NULL);
-    pthread_join(thread[4], NULL);
+    pthread_join(main_thread[0], NULL);
+    //exit(0);
+    pthread_create(&main_thread[4], NULL, displayBoard, NULL);
+    pthread_join(main_thread[4], NULL);
     // Wait for the thread to finish execution
     //pthread_join(interest_amt_thread, NULL);
 

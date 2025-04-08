@@ -8,6 +8,7 @@
 #include <time.h>
 #include <math.h>
 #include "board_layout.h"
+#include "audio.h"
 #define MAX_ROWS 500
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -27,7 +28,7 @@ char** nick_name = NULL;
 char* selected_player = NULL;
 char* selected_personality = NULL;
 char* selected_speciality = NULL;
-double money=200000; //initial amount
+double money=10000; //initial amount
 char* player_name = NULL;
 char name1[250], name2[250], full_name[500];
 
@@ -74,7 +75,7 @@ double transaction(const char* targetPlayer, double total_amt, double transactio
         // Generate a random number between 0 and 1, then scale it to the range [lower_amt_margin, max_amt_margin]
         double random_amt = (rand() / (double)RAND_MAX) * (max_amt_margin - lower_amt_margin) + lower_amt_margin; // Generate a random amt between the margins
         printf("Insufficients funds for Transaction, Invalid request \n ");
-        printf("Cheque bounced, pay a fine of Rs %.2f to Bank \n", random_amt);
+        printf("Cheque bounced, pay a fine of $%.2f to Bank \n", random_amt);
         make_negative_double(&random_amt);
         return transaction(targetPlayer,total_amt, random_amt);
     } else if(total_amt == 0){
@@ -226,14 +227,15 @@ void *display_Character_Details(void *args) {
 void Confirmed_character(char* nickname,char* personality,char* speciality){
     char ch;
     system("clear");
-    printf(YELLOW "[💼] Welcome %s, to Switzerland's Digital Realm! 🌍\n\n", nickname);
-    printf("[🤖] I’m Mia, here to guide you on your path to fortune 🛤️\n\n");
-    printf("[💰] Your current balance is Rs %.2f 💸. Make sure to use it wisely 🏦\n\n", money);
-    printf("[⚡] Your mission: Make decisions that will either make you rich or send you into debt 💳\n\n");
-    printf("[🏠] Buy assets, earn profits, and watch your wealth grow with interest 💎\n\n");
-    printf("[⏳] In this world, every 30 seconds equals one full month of growth 🌿\n\n");
-    printf("[💡] Interest is earned on both your assets and their profits 💰\n\n");
-    printf("[🎯] Best of luck in your journey ahead! 🌠\n\n" RESET);
+    printf(GREEN "[👩‍💼] Mia [Your guide throughout journey] \n\n" RESET);
+    printf(YELLOW "[💼] Welcome to Assetopia's Digital Realm! 🌍\n\n");
+    printf("[🤖] I'm Mia, here to guide you on your path to fortune. 🛤️\n\n");
+    printf("[💰] You will begin your journey with a balance of $10,000. 🏦\n\n");
+    printf("[⚡] The choices you make will either pave the way to great riches or pull you into the grip of debt. 💳\n\n");
+    printf("[💡] In this world, you can buy assets, earn profits, and watch your wealth grow, but remember, every ⏳ 30 seconds equals a full month of growth.
+Interest is earned on both your assets and their profits, so keep an eye on your investments.\n\n");
+    printf("[🌟] Throughout your journey, you'll experience various stages of life, from taking on home loans to attending extravagant cruise parties. Your reputation will be shaped by the assets you accumulate. \n\n");
+    printf("[🚀] Best of luck on your journey ahead! \n\n" RESET);    
     selected_player = nickname;
     selected_personality = personality;
     selected_speciality = speciality;
@@ -241,6 +243,7 @@ void Confirmed_character(char* nickname,char* personality,char* speciality){
     getchar();  // This is to clear out any leftover input from previous operations
     ch = getchar();
     if (ch == '\n') {
+        pthread_join(main_thread[5], NULL);
         system("clear");
     } else{
         Confirmed_character(nickname, personality, speciality);
@@ -272,6 +275,7 @@ void player_setup(int choice){
         if (tolower(ch_i) == 'y') {
             printf("MOVING FORWARD WITH THE SELECTION\n");
             sleep(2);
+            pthread_create(&main_thread[5], NULL, mia_intro, NULL);
             Confirmed_character(nick_name[choice-1], personality[choice-1],sp_ability[choice-1]);
             break;
         } else if (tolower(ch_i) == 'n') {

@@ -21,13 +21,13 @@ void get_watch_quest(int own_property_counter){
     if (own_property_counter > 3 && get_watch1 == false) {
         double worth = 430500.80;
         char* watch = "⌚ Patek Philippe 7042/100G - Gondolo";
-        printf(GREEN "Congratulations! 🌟 Received a %s of worth Rs %.2f from Mr. Ammy as a token of appreciation\n" RESET, watch, worth);
+        printf(GREEN "Congratulations! 🌟 Received a %s of worth $%.2f from Mr. Ammy as a token of appreciation\n" RESET, watch, worth);
         get_watch1 = true;
         bought_property(worth, watch); 
     } else if (own_property_counter > 5 && get_watch2 == false) {
         double worth = 600000.00;
         char* watch = "⌚ Omega Seamaster ";
-        printf(GREEN "Congratulations! 🌟 Received a %s of worth Rs %.2f from Mr. Ammy as a token of appreciation\n" RESET, watch, worth);
+        printf(GREEN "Congratulations! 🌟 Received a %s of worth $%.2f from Mr. Ammy as a token of appreciation\n" RESET, watch, worth);
         get_watch2 = true;
         bought_property(worth, watch); 
 }

@@ -17,6 +17,7 @@
 #define MAX_ROWS 100
 #define MAX_LINE_LENGTH 1024
 
+pthread_t main_thread[50];
 double rent[8] = {250.0, 450.0, 400.0, 140.0, 620.0, 280.0, 300.0, 800.0};
 double interest_per[8] = {7.3, 3, 4, 6.2, 5, 6, 7, 8};
 int tenure[8] = {1,3,6,4,5,2,10,8};
@@ -345,8 +346,8 @@ void* increase_amt(void* arg) {
     for (long long i = 0; i < intervals; i++) {
         sleep(seconds_interval);  // Sleep for the given interval before next increase
         double interest_amt = increase_amount(*amt, increase_percent);  // Increase the amount by the given percentage
-        printf("\n💼 Current Balance: Rs %.2f 💻\n", money);
-        printf(GREEN " Interest Accrued: Rs %.2f 🌟\n" RESET, interest_amt);        
+        printf("\n💼 Current Balance: $ %.2f 💻\n", money);
+        printf(GREEN " Interest Accrued: $ %.2f 🌟\n" RESET, interest_amt);        
         //curr_bal = get_asset_from_file(selected_player);
         
         transaction(selected_player,money,interest_amt);
@@ -404,7 +405,7 @@ int bought_property(double amt, char* property){
             } else {
                 quoted_price[i] =  own_properties_amt[i] - random_factor;
             }
-            printf(YELLOW "%d-[🏠] Owned: %s | Purchased Amt: Rs %.2f | Quoted Price: Rs %.2f 💰\n" RESET, i+1, owned_properties[i], own_properties_amt[i], quoted_price[i]);
+            printf(YELLOW "%d-[🏠] Owned: %s | Purchased Amt: $ %.2f | Quoted Price: $ %.2f 💰\n" RESET, i+1, owned_properties[i], own_properties_amt[i], quoted_price[i]);
         }
         if (own_property_counter > 0){
             printf(GREEN " DO YOU WISH TO SELL YOUR PROPERTY? (Enter the corresponding number to sell) or Enter '0' to skip \n" RESET);
@@ -443,7 +444,7 @@ void attrProperty(int i,int randomIndex){
     printf("%s \n\n",action[i]);
     //will define the sequence once the player lands in property
     char ch;
-    printf("Do you want to buy this property for Rs%.2f or pay rent of Rs%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),fabs(rent[r_index]));
+    printf("Do you want to buy this property for $%.2f or pay rent of $%.2f ? (B/R) : ",fabs(h_amt[randomIndex]),fabs(rent[r_index]));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
@@ -485,7 +486,7 @@ void attrAirport(int i,int randomIndex){
     //defining flow for airport
     char ch;
     double fee = -100.00;
-    printf("Do you want to buy this Airport for Rs%.2f or parking fee of Rs%.2f ? (B/R) : ",fabs(a_amt[randomIndex]),fabs(fee));
+    printf("Do you want to buy this Airport for $%.2f or parking fee of $%.2f ? (B/R) : ",fabs(a_amt[randomIndex]),fabs(fee));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this property. Proceeding...\n");
@@ -516,7 +517,7 @@ void attrOffice(int i,int randomIndex){
     printf("%s \n\n",action[i]);
     //flow for buying office
     char ch;
-    printf("Do you want to buy this Company for Rs%.2f or visiting fee of Rs%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),fabs(rent[r_index]));
+    printf("Do you want to buy this Company for $%.2f or visiting fee of $%.2f ? (B/R) : ",fabs(c_amt[randomIndex]),fabs(rent[r_index]));
     scanf(" %c", &ch);  // here I have have space before %c to ignore any leftover newline character
     if (ch == 'B' || ch == 'b') {
         printf("You chose to buy this Office. Proceeding...\n");
@@ -544,7 +545,7 @@ void attrOffice(int i,int randomIndex){
 void attrPrison(int i){
     int r_index = rand() % 8;
     double bail_amt = -3000;
-    printf("%s. Pay Rs%.2f to get bail \n\n",action[i],fabs(bail_amt));
+    printf("%s. Pay $%.2f to get bail \n\n",action[i],fabs(bail_amt));
     money = transaction(selected_player,money,bail_amt);
 }
 
@@ -646,7 +647,7 @@ void *displayBoard(void *args) {
         } else{
             travel_cost_r = travel_cost;
         }
-        printf("Spent Rs %.2f on travelling \n",fabs(travel_cost_r));
+        printf("Spent $ %.2f on travelling \n",fabs(travel_cost_r));
         make_negative_double(&travel_cost_r);
         transaction(selected_player,money,travel_cost_r);
         sleep(2);
