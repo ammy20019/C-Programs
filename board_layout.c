@@ -647,7 +647,7 @@ void *displayBoard(void *args) {
         } else{
             travel_cost_r = travel_cost;
         }
-        printf("Spent $ %.2f on travelling \n",fabs(travel_cost_r));
+        printf("Spent $%.2f on travelling \n",fabs(travel_cost_r));
         make_negative_double(&travel_cost_r);
         transaction(selected_player,money,travel_cost_r);
         sleep(2);

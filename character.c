@@ -232,8 +232,7 @@ void Confirmed_character(char* nickname,char* personality,char* speciality){
     printf("[🤖] I'm Mia, here to guide you on your path to fortune. 🛤️\n\n");
     printf("[💰] You will begin your journey with a balance of $10,000. 🏦\n\n");
     printf("[⚡] The choices you make will either pave the way to great riches or pull you into the grip of debt. 💳\n\n");
-    printf("[💡] In this world, you can buy assets, earn profits, and watch your wealth grow, but remember, every ⏳ 30 seconds equals a full month of growth.
-Interest is earned on both your assets and their profits, so keep an eye on your investments.\n\n");
+    printf("[💡] In this world, you can buy assets, earn profits, and watch your wealth grow, but remember, every ⏳ 30 seconds equals a full month of growth. Interest is earned on both your assets and their profits, so keep an eye on your investments.\n\n");
     printf("[🌟] Throughout your journey, you'll experience various stages of life, from taking on home loans to attending extravagant cruise parties. Your reputation will be shaped by the assets you accumulate. \n\n");
     printf("[🚀] Best of luck on your journey ahead! \n\n" RESET);    
     selected_player = nickname;
